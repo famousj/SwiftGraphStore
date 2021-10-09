@@ -16,6 +16,7 @@ let package = Package(
             targets: ["SwiftGraphStore"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.4.0")),
         .package(url: "https://github.com/famousj/UrsusHTTP", .upToNextMajor(from: "1.10.0")),
 
     ],
@@ -24,7 +25,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "SwiftGraphStore",
-            dependencies: []),
+            dependencies: ["Alamofire", "UrsusHTTP"]),
         .testTarget(
             name: "SwiftGraphStoreTests",
             dependencies: ["SwiftGraphStore"]),
