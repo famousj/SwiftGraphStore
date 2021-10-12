@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import Alamofire
 import UrsusHTTP
 import UrsusAtom
@@ -11,19 +12,25 @@ public class UrsusHTTPConnection: AirlockConnection {
     public init(url: URL, code: PatP) {
         self.client = Client(url: url, code: code)
     }
-
-    public func loginRequest(handler: @escaping (AFResult<Ship>) -> Void) -> DataRequest {
-        client.loginRequest { result in
-           if case let .success(ship) = result {
-               self.ship = ship
-            }
-            
-            handler(result)
-        }
+    
+    public func requestLogin() -> AnyPublisher<Ship, AFError> {
+        client
+            .loginRequestPublisher()
     }
     
-    public func pokeRequest<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T, handler: @escaping (PokeEvent) -> Void) -> DataRequest {
-        client.pokeRequest(ship: ship, app: app, mark: mark, json: json, handler: handler)
+    public func requestPoke<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T, handler: @escaping (PokeEvent) -> Void) -> AnyPublisher<Alamofire.Empty, AFError> {
+        client
+            .pokeRequest(ship: ship, app: app, mark: mark, json: json, handler: handler)
+            .publishDecodable()
+            .value()
+            .eraseToAnyPublisher()
     }
-
+    
+    public func connect() -> AnyPublisher<String, AFError> {
+        client
+            .connect()
+            .publishString()
+            .value()
+            .eraseToAnyPublisher()
+    }
 }
