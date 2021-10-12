@@ -1,6 +1,6 @@
 import Foundation
 
-struct AddGraphAction: Encodable {
+struct AddGraphAction: Encodable, Equatable {
     enum CodingKeys: String, CodingKey {
         case addGraph = "add-graph"
     }

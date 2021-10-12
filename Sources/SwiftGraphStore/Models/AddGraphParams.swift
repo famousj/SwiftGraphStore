@@ -1,6 +1,6 @@
 import Foundation
 
-struct AddGraphParams: Encodable {
+struct AddGraphParams: Encodable, Equatable {
     let resource: Resource
     let graph: [String: String]
     @NullCodable var mark: String?

@@ -28,3 +28,5 @@ extension NullCodable: Decodable where T: Decodable {
         self.wrappedValue = try? container.decode(T.self)
     }
 }
+
+extension NullCodable: Equatable where T: Equatable { }
