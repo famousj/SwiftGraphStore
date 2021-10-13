@@ -5,6 +5,11 @@ import Alamofire
 import UrsusHTTP
 
 class FakeAirlockConnection: AirlockConnection {
+    var graphStoreSubscriptionSubject = PassthroughSubject<String, SubscribeError>()
+    var graphStoreSubscription: AnyPublisher<String, SubscribeError> {
+        graphStoreSubscriptionSubject.eraseToAnyPublisher()
+    }
+    
     var requestLogin_calledCount = 0
     var requestLogin_response: Ship?
     var requestLogin_error: AFError?
@@ -16,7 +21,7 @@ class FakeAirlockConnection: AirlockConnection {
                 .eraseToAnyPublisher()
         } else {
             return Just(requestLogin_response!)
-                .asAlamofirePublisher
+                .asAlamofirePublisher()
         }
     }
     
@@ -24,43 +29,57 @@ class FakeAirlockConnection: AirlockConnection {
     var requestPoke_paramShip: Ship?
     var requestPoke_paramApp: App?
     var requestPoke_paramMark: Mark?
-    var requestPoke_paramJson: String?
-    var requestPoke_error: AFError?
-    func requestPoke<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T, handler: @escaping (PokeEvent) -> Void) -> AnyPublisher<Alamofire.Empty, AFError> {
+    var requestPoke_paramJson: Encodable?
+    var requestPoke_error: PokeError?
+    func requestPoke<T>(ship: Ship, app: App, mark: Mark, json: T) -> AnyPublisher<Never, PokeError> where T : Encodable {
         requestPoke_calledCount += 1
         requestPoke_paramShip = ship
         requestPoke_paramApp = app
         requestPoke_paramMark = mark
-        requestPoke_paramJson = json as? String
+        requestPoke_paramJson = json
         
         if let error = requestPoke_error {
-            return Fail(outputType: Empty.self, failure: error)
+            return Fail(error: error)
                 .eraseToAnyPublisher()
-        } else {
-            return Just(Alamofire.Empty.emptyValue())
-                .asAlamofirePublisher
+        }
+        else {
+            return neverPublisher()
         }
     }
     
-    var connect_calledCount = 0
-    var connect_error: AFError?
-    func connect() -> AnyPublisher<String, AFError> {
-        connect_calledCount += 1
+    var requestStartSubscription_calledCount = 0
+    var requestStartSubscription_paramShip: Ship?
+    var requestStartSubscription_paramApp: App?
+    var requestStartSubscription_paramPath: Path?
+    
+    var requestStartSubscription_error: AFError?
+    func requestStartSubscription(ship: Ship, app: App, path: Path) -> AnyPublisher<Never, AFError> {
+        requestStartSubscription_calledCount += 1
         
-        if let error = connect_error {
+        requestStartSubscription_paramShip = ship
+        requestStartSubscription_paramApp = app
+        requestStartSubscription_paramPath = path
+        
+        if let error = requestStartSubscription_error {
             return Fail(error: error)
                 .eraseToAnyPublisher()
         } else {
-            return Just("")
-                .asAlamofirePublisher
+            return neverPublisher()
+            
         }
     }
     
+    private func neverPublisher<E: Error>() -> AnyPublisher<Never, E> {
+        Just(true)
+            .ignoreOutput()
+            .setFailureType(to: E.self)
+            .eraseToAnyPublisher()
+    }
 }
 
 extension Just {
-    var asAlamofirePublisher: AnyPublisher<Output, AFError> {
-        setFailureType(to: AFError.self)
+    func asAlamofirePublisher<E: Error>() -> AnyPublisher<Output, E> {
+        setFailureType(to: E.self)
             .eraseToAnyPublisher()
     }
 }

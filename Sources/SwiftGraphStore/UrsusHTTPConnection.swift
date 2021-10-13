@@ -5,32 +5,79 @@ import UrsusHTTP
 import UrsusAtom
 
 public class UrsusHTTPConnection: AirlockConnection {
+    
+    private var graphStoreSubject = PassthroughSubject<String, SubscribeError>()
+    public var graphStoreSubscription: AnyPublisher<String, SubscribeError> {
+        graphStoreSubject.eraseToAnyPublisher()
+    }
+    
     private let client: Client
     
     public private(set) var ship: Ship?
     
-    public init(url: URL, code: PatP) {
+    public init(url: URL, code: Code) {
         self.client = Client(url: url, code: code)
     }
     
     public func requestLogin() -> AnyPublisher<Ship, AFError> {
-        client
-            .loginRequestPublisher()
+        Future { promise in
+            self.client
+                .loginRequest(handler: { result in
+                    promise(result)
+                })
+        }
+        .eraseToAnyPublisher()
     }
     
-    public func requestPoke<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T, handler: @escaping (PokeEvent) -> Void) -> AnyPublisher<Alamofire.Empty, AFError> {
-        client
-            .pokeRequest(ship: ship, app: app, mark: mark, json: json, handler: handler)
-            .publishDecodable()
-            .value()
+    public func requestPoke<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T) -> AnyPublisher<Never, PokeError> {
+        let subject = PassthroughSubject<Never, PokeError>()
+        
+        self.client
+            .pokeRequest(ship: ship, app: app, mark: mark, json: json) { pokeEvent in
+                switch pokeEvent {
+                case .finished:
+                    subject.send(completion: .finished)
+                case .failure(let pokeError):
+                    subject.send(completion: .failure(pokeError))
+                }
+            }
+            .response { _ in
+                self.client
+                    .connect()
+            }
+        
+        return subject
             .eraseToAnyPublisher()
     }
     
-    public func connect() -> AnyPublisher<String, AFError> {
+    public func requestStartSubscription(ship: Ship, app: App, path: Path) -> AnyPublisher<Never, AFError> {
+        let subject = PassthroughSubject<Never, AFError>()
+        
         client
-            .connect()
-            .publishString()
-            .value()
-            .eraseToAnyPublisher()
+            .subscribeRequest(ship: ship, app: app, path: path) { event in
+                switch event {
+                case .started:
+                    print("Subscription started")
+                    break
+                case .failure(let subscribeError):
+                    self.graphStoreSubject.send(completion: .failure(subscribeError))
+                case .update(let data):
+                    let dataString = String(data: data, encoding: .utf8) ?? "Undecodable data"
+                    print(dataString)
+                    self.graphStoreSubject.send(dataString)
+                case .finished:
+                    self.graphStoreSubject.send(completion: .finished)
+                }
+            }
+            .response { response in
+                switch response.result {
+                case .failure(let error):
+                    subject.send(completion: .failure(error))
+                case .success:
+                    subject.send(completion: .finished)
+                }
+            }
+        
+        return subject.eraseToAnyPublisher()
     }
 }

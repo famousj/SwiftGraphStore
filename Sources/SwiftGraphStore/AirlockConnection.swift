@@ -4,7 +4,9 @@ import Alamofire
 import UrsusHTTP
 
 public protocol AirlockConnection {
+    var graphStoreSubscription: AnyPublisher<String, SubscribeError> { get }
+    
     func requestLogin() -> AnyPublisher<Ship, AFError>
-    func requestPoke<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T, handler: @escaping (PokeEvent) -> Void) -> AnyPublisher<Alamofire.Empty, AFError>
-    func connect() -> AnyPublisher<String, AFError>
+    func requestPoke<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T) -> AnyPublisher<Never, PokeError>
+    func requestStartSubscription(ship: Ship, app: App, path: Path) -> AnyPublisher<Never, AFError>
 }

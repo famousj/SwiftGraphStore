@@ -5,10 +5,12 @@ import UrsusHTTP
 
 public protocol GraphStoreConnection {
     var ship: Ship? { get }
-    var loggedIn: Bool { get }
-    var connected: Bool { get }
+    
+    var graphStoreSubscription: AnyPublisher<String, SubscribeError> { get }
     
     func requestLogin() -> AnyPublisher<Ship, AFError>
-    func requestConnect() -> AnyPublisher<String, AFError>
-    func requestAddGraph(name: Term, handler: @escaping (PokeEvent) -> Void) -> AnyPublisher<Alamofire.Empty, AFError>
+    func requestConnect() -> AnyPublisher<Never, PokeError>
+    func requestStartSubscription() -> AnyPublisher<Never, AFError>
+
+    func requestAddGraph(name: Term) -> AnyPublisher<Never, PokeError>
 }
