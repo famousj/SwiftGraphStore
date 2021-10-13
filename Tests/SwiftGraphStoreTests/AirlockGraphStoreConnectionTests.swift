@@ -201,12 +201,18 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         })
     }
 
-    func test_graphStoreSubscription_convertsDataToString() {
+    func test_graphStoreSubscription_convertsDataToUpdate() {
         let fakeAirlockConnection = FakeAirlockConnection()
         
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        let expectedString = UUID().uuidString
+        let ship = Ship.random
+        loginAndSetShip(testObject: testObject, fakeAirlockConnection: fakeAirlockConnection, ship: ship)
+
+        let resource = Resource(ship: ship, name: UUID().uuidString)
+        let addGraph = AddGraph(resource: resource, graph: Graph(), mark: UUID().uuidString, overwrite: Bool.random())
+        let graphUpdate = GraphUpdate(addGraph: addGraph)
+        let expectedUpdate = GraphStoreSubscriptionUpdate(graphUpdate: graphUpdate)
         
         var cancellables = [AnyCancellable]()
         let expectation = XCTestExpectation(description: "Data converted")
@@ -215,15 +221,44 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
             .sink(
                 receiveCompletion: { _ in },
                 receiveValue: { value in
-                    XCTAssertEqual(value, expectedString)
+                    XCTAssertEqual(value, expectedUpdate)
                     expectation.fulfill()
                 }
             )
             .store(in: &cancellables)
                 
+        let encoder = JSONEncoder()
+        let updateData = try! encoder.encode(expectedUpdate)
         fakeAirlockConnection
             .graphStoreSubscriptionSubject
-            .send(expectedString.data(using: .utf8)!)
+            .send(updateData)
+        
+        wait(for: [expectation], timeout: 1)
+    }
+    
+    func test_graphStoreSubscription_sendsErrorForBadData() {
+        let fakeAirlockConnection = FakeAirlockConnection()
+        
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+        
+        var cancellables = [AnyCancellable]()
+        let expectation = XCTestExpectation(description: "Error sent")
+        testObject
+            .graphStoreSubscription
+            .sink(receiveCompletion: { completion in
+                if case let .failure(error) = completion {
+                    XCTAssertNotNil(error as? DecodingError)
+                    expectation.fulfill()
+                }
+            }, receiveValue: { _ in })
+            .store(in: &cancellables)
+                
+        let badData = """
+                { "graph-update": {}}
+                """.data(using: .utf8)!
+        fakeAirlockConnection
+            .graphStoreSubscriptionSubject
+            .send(badData)
         
         wait(for: [expectation], timeout: 1)
     }

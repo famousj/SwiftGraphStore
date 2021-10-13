@@ -8,15 +8,16 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
     public private(set) var ship: Ship?
     
     private let airlockConnection: AirlockConnection
-    public let graphStoreSubscription: AnyPublisher<String, SubscribeError>
+    public let graphStoreSubscription: AnyPublisher<GraphStoreSubscriptionUpdate, Error>
     
     public init(airlockConnection: AirlockConnection) {
         self.airlockConnection = airlockConnection
         
         graphStoreSubscription = airlockConnection
             .graphStoreSubscription
-            .map { data in
-                String(data: data, encoding: .utf8) ?? "Invalid data"
+            .tryMap { data -> GraphStoreSubscriptionUpdate in
+                let decoder = JSONDecoder()
+                return try decoder.decode(GraphStoreSubscriptionUpdate.self, from: data)
             }
             .eraseToAnyPublisher()
     }
