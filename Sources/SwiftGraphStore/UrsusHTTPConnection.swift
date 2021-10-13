@@ -6,8 +6,8 @@ import UrsusAtom
 
 public class UrsusHTTPConnection: AirlockConnection {
     
-    private var graphStoreSubject = PassthroughSubject<String, SubscribeError>()
-    public var graphStoreSubscription: AnyPublisher<String, SubscribeError> {
+    private var graphStoreSubject = PassthroughSubject<Data, SubscribeError>()
+    public var graphStoreSubscription: AnyPublisher<Data, SubscribeError> {
         graphStoreSubject.eraseToAnyPublisher()
     }
     
@@ -62,9 +62,7 @@ public class UrsusHTTPConnection: AirlockConnection {
                 case .failure(let subscribeError):
                     self.graphStoreSubject.send(completion: .failure(subscribeError))
                 case .update(let data):
-                    let dataString = String(data: data, encoding: .utf8) ?? "Undecodable data"
-                    print(dataString)
-                    self.graphStoreSubject.send(dataString)
+                    self.graphStoreSubject.send(data)
                 case .finished:
                     self.graphStoreSubject.send(completion: .finished)
                 }

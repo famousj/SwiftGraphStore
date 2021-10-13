@@ -8,13 +8,17 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
     public private(set) var ship: Ship?
     
     private let airlockConnection: AirlockConnection
-    
-    public var graphStoreSubscription: AnyPublisher<String, SubscribeError> {
-        airlockConnection.graphStoreSubscription
-    }
+    public let graphStoreSubscription: AnyPublisher<String, SubscribeError>
     
     public init(airlockConnection: AirlockConnection) {
         self.airlockConnection = airlockConnection
+        
+        graphStoreSubscription = airlockConnection
+            .graphStoreSubscription
+            .map { data in
+                String(data: data, encoding: .utf8) ?? "Invalid data"
+            }
+            .eraseToAnyPublisher()
     }
     
     public func requestLogin() -> AnyPublisher<Ship, AFError> {

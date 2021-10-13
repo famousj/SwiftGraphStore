@@ -5,9 +5,10 @@ import Alamofire
 import UrsusHTTP
 
 class FakeAirlockConnection: AirlockConnection {
-    var graphStoreSubscriptionSubject = PassthroughSubject<String, SubscribeError>()
-    var graphStoreSubscription: AnyPublisher<String, SubscribeError> {
-        graphStoreSubscriptionSubject.eraseToAnyPublisher()
+    var graphStoreSubscriptionSubject = PassthroughSubject<Data, SubscribeError>()
+    var graphStoreSubscription: AnyPublisher<Data, SubscribeError> {
+        graphStoreSubscriptionSubject
+            .eraseToAnyPublisher()
     }
     
     var requestLogin_calledCount = 0
