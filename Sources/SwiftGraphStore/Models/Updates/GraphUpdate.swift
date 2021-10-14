@@ -1,7 +1,7 @@
 import Foundation
 
 public struct GraphUpdate: Codable, Equatable {
-    let addGraph: AddGraph
+    public let addGraph: AddGraphUpdate
     
     enum CodingKeys: String, CodingKey {
         case addGraph = "add-graph"

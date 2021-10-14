@@ -210,7 +210,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         loginAndSetShip(testObject: testObject, fakeAirlockConnection: fakeAirlockConnection, ship: ship)
 
         let resource = Resource(ship: ship, name: UUID().uuidString)
-        let addGraph = AddGraph(resource: resource, graph: Graph(), mark: UUID().uuidString, overwrite: Bool.random())
+        let addGraph = AddGraphUpdate(resource: resource, graph: Graph(), mark: UUID().uuidString, overwrite: Bool.random())
         let graphUpdate = GraphUpdate(addGraph: addGraph)
         let expectedUpdate = GraphStoreSubscriptionUpdate(graphUpdate: graphUpdate)
         
