@@ -1,0 +1,9 @@
+{
+    "overwrite": true,
+    "mark": null,
+    "graph": {},
+    "resource": {
+        "name": "super-test-graph",
+        "ship": "zod"
+    }
+}
