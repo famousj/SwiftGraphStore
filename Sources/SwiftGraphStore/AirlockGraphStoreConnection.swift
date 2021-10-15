@@ -7,16 +7,16 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
     public private(set) var ship: Ship?
     
     private let airlockConnection: AirlockConnection
-    public let graphStoreSubscription: AnyPublisher<GraphStoregUpdate, Error>
+    public let graphStoreSubscription: AnyPublisher<GraphStoreUpdate, Error>
     
     public init(airlockConnection: AirlockConnection) {
         self.airlockConnection = airlockConnection
         
         graphStoreSubscription = airlockConnection
             .graphStoreSubscription
-            .tryMap { data -> GraphStoregUpdate in
+            .tryMap { data -> GraphStoreUpdate in
                 let decoder = JSONDecoder()
-                return try decoder.decode(GraphStoregUpdate.self, from: data)
+                return try decoder.decode(GraphStoreUpdate.self, from: data)
             }
             .eraseToAnyPublisher()
     }
