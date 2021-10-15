@@ -11,6 +11,8 @@ public protocol GraphStoreConnection {
     func requestLogin() -> AnyPublisher<Ship, AFError>
     func requestConnect() -> AnyPublisher<Never, PokeError>
     func requestStartSubscription() -> AnyPublisher<Never, AFError>
+    
+    func requestScry(path: Path) -> AnyPublisher<String, AFError>
 
     func requestAddGraph(name: Term) -> AnyPublisher<Never, PokeError>
 }

@@ -51,6 +51,16 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .requestStartSubscription(ship: ship, app: Constants.graphStoreAppName, path: Constants.graphStoreUpdatePath)
     }
     
+    public func requestScry(path: Path) -> AnyPublisher<String, AFError> {
+        guard let ship = ship else {
+            return Fail(error: AFError.createURLRequestFailed(error: NSError()))
+                .eraseToAnyPublisher()
+        }
+        
+        return airlockConnection
+            .requestScry(app: Constants.graphStoreAppName, path: path)
+    }
+
     public func requestAddGraph(name: Term) -> AnyPublisher<Never, PokeError> {
         guard let ship = ship else {
             return Fail(error: PokeError.pokeFailure("Can't add a graph. You aren't logged in!"))

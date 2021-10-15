@@ -50,6 +50,30 @@ public class UrsusHTTPConnection: AirlockConnection {
             .eraseToAnyPublisher()
     }
     
+    // TODO: Return Update
+    public func requestScry(app: App, path: Path) -> AnyPublisher<String, AFError> {
+        let subject = PassthroughSubject<String, AFError>()
+        
+        self.client
+            .scryRequest(app: app, path: path)
+            .response { response in
+                switch response.result {
+                case .success(let data):
+                    guard let data = data else {
+                        subject.send(completion: .failure(AFError.responseValidationFailed(reason: .dataFileNil)))
+                        return
+                    }
+                    let dataString = String(data: data, encoding: .utf8) ?? "Invalid scry data"
+                    subject.send(dataString)
+                    subject.send(completion: .finished)
+                case .failure(let error):
+                    subject.send(completion: .failure(error))
+                }
+            }
+            
+        return subject.eraseToAnyPublisher()
+    }
+
     public func requestStartSubscription(ship: Ship, app: App, path: Path) -> AnyPublisher<Never, AFError> {
         let subject = PassthroughSubject<Never, AFError>()
         

@@ -8,5 +8,6 @@ public protocol AirlockConnection {
     
     func requestLogin() -> AnyPublisher<Ship, AFError>
     func requestPoke<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T) -> AnyPublisher<Never, PokeError>
+    func requestScry(app: App, path: Path) -> AnyPublisher<String, AFError>
     func requestStartSubscription(ship: Ship, app: App, path: Path) -> AnyPublisher<Never, AFError>
 }
