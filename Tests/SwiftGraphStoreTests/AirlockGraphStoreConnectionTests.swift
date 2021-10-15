@@ -212,7 +212,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let resource = Resource(ship: ship, name: UUID().uuidString)
         let addGraph = AddGraphUpdate(resource: resource, graph: Graph(), mark: UUID().uuidString, overwrite: Bool.random())
         let graphUpdate = GraphUpdate(addGraph: addGraph)
-        let expectedUpdate = GraphStoreSubscriptionUpdate(graphUpdate: graphUpdate)
+        let expectedUpdate = GraphStoreUpdate(graphUpdate: graphUpdate)
         
         var cancellables = [AnyCancellable]()
         let expectation = XCTestExpectation(description: "Data converted")

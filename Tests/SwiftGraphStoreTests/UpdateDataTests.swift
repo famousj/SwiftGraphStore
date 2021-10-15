@@ -11,7 +11,7 @@ final class UpdateDataTests: XCTestCase {
         let _: GraphUpdate = try! JSONLoader.load("graph-update.json")
     }
     
-    func test_subscriptionUpdateParses() {
-        let _: GraphStoreSubscriptionUpdate = try! JSONLoader.load("subscription-update.json")
+    func test_updateParses() {
+        let _: GraphStoreUpdate = try! JSONLoader.load("subscription-update.json")
     }
 }

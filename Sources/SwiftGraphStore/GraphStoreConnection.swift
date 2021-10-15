@@ -6,7 +6,7 @@ import UrsusHTTP
 public protocol GraphStoreConnection {
     var ship: Ship? { get }
     
-    var graphStoreSubscription: AnyPublisher<GraphStoreSubscriptionUpdate, Error> { get }
+    var graphStoreSubscription: AnyPublisher<GraphStoreUpdate, Error> { get }
     
     func requestLogin() -> AnyPublisher<Ship, AFError>
     func requestConnect() -> AnyPublisher<Never, PokeError>

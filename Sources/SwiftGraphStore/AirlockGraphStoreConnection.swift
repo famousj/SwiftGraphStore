@@ -4,20 +4,19 @@ import Alamofire
 import UrsusHTTP
 
 public class AirlockGraphStoreConnection: GraphStoreConnection {
-    
     public private(set) var ship: Ship?
     
     private let airlockConnection: AirlockConnection
-    public let graphStoreSubscription: AnyPublisher<GraphStoreSubscriptionUpdate, Error>
+    public let graphStoreSubscription: AnyPublisher<GraphStoregUpdate, Error>
     
     public init(airlockConnection: AirlockConnection) {
         self.airlockConnection = airlockConnection
         
         graphStoreSubscription = airlockConnection
             .graphStoreSubscription
-            .tryMap { data -> GraphStoreSubscriptionUpdate in
+            .tryMap { data -> GraphStoregUpdate in
                 let decoder = JSONDecoder()
-                return try decoder.decode(GraphStoreSubscriptionUpdate.self, from: data)
+                return try decoder.decode(GraphStoregUpdate.self, from: data)
             }
             .eraseToAnyPublisher()
     }

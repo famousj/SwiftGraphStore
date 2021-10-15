@@ -1,6 +1,6 @@
 import Foundation
 
-public struct GraphStoreSubscriptionUpdate: Codable, Equatable {
+public struct GraphStoreUpdate: Codable, Equatable {
     public let graphUpdate: GraphUpdate
     
     enum CodingKeys: String, CodingKey {

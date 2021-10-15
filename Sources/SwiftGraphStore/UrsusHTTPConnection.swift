@@ -32,7 +32,7 @@ public class UrsusHTTPConnection: AirlockConnection {
     public func requestPoke<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T) -> AnyPublisher<Never, PokeError> {
         let subject = PassthroughSubject<Never, PokeError>()
         
-        self.client
+        client
             .pokeRequest(ship: ship, app: app, mark: mark, json: json) { pokeEvent in
                 switch pokeEvent {
                 case .finished:
