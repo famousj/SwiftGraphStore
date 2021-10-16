@@ -164,11 +164,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         
         let name = UUID().uuidString
         let resource = Resource(ship: ship, name: name)
-        let params = AddGraphParams(resource: resource,
-                                    graph: [:],
-                                    mark: nil,
-                                    overwrite: true)
-        let update = AddGraphAction(addGraph: params)
+        let update = GraphUpdate.addGraph(resource: resource, graph: Graph(), mark: nil, overwrite: true)
         
         let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddGraph(name: name) }
         callRequestAndVerifyResponse(request: request,
@@ -178,7 +174,8 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
             XCTAssertEqual(fakeAirlockConnection.requestPoke_paramShip, ship)
             XCTAssertEqual(fakeAirlockConnection.requestPoke_paramApp, Constants.graphStoreAppName)
             XCTAssertEqual(fakeAirlockConnection.requestPoke_paramMark, Constants.graphStoreUpdateMark)
-            XCTAssertEqual(fakeAirlockConnection.requestPoke_paramJson as? AddGraphAction, update)
+            XCTAssertEqual(fakeAirlockConnection.requestPoke_paramJson as? GraphUpdate, update)
+
         })
     }
     
@@ -210,8 +207,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         loginAndSetShip(testObject: testObject, fakeAirlockConnection: fakeAirlockConnection, ship: ship)
 
         let resource = Resource(ship: ship, name: UUID().uuidString)
-        let addGraph = AddGraphUpdate(resource: resource, graph: Graph(), mark: UUID().uuidString, overwrite: Bool.random())
-        let graphUpdate = GraphUpdate(addGraph: addGraph)
+        let graphUpdate = GraphUpdate.addGraph(resource: resource, graph: Graph(), mark: UUID().uuidString, overwrite: Bool.random())
         let expectedUpdate = GraphStoreUpdate(graphUpdate: graphUpdate)
         
         var cancellables = [AnyCancellable]()

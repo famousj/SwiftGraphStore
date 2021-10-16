@@ -48,6 +48,27 @@ class FakeAirlockConnection: AirlockConnection {
         }
     }
     
+    var requestScry_calledCount = 0
+    var requestScry_paramApp: App?
+    var requestScry_paramPath: Path?
+    
+    var requestScry_error: AFError?
+    var requestScry_response: String?
+    func requestScry(app: App, path: Path) -> AnyPublisher<String, AFError> {
+        requestScry_calledCount += 1
+        
+        requestScry_paramApp = app
+        requestScry_paramPath = path
+        
+        if let error = requestScry_error {
+            return Fail(outputType: String.self, failure: error)
+                .eraseToAnyPublisher()
+        } else {
+            return Just(requestScry_response!)
+                .asAlamofirePublisher()
+        }
+    }
+    
     var requestStartSubscription_calledCount = 0
     var requestStartSubscription_paramShip: Ship?
     var requestStartSubscription_paramApp: App?

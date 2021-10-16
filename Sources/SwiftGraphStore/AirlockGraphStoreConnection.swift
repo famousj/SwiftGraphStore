@@ -52,7 +52,7 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
     }
     
     public func requestScry(path: Path) -> AnyPublisher<String, AFError> {
-        guard let ship = ship else {
+        guard let _ = ship else {
             return Fail(error: AFError.createURLRequestFailed(error: NSError()))
                 .eraseToAnyPublisher()
         }
@@ -68,11 +68,7 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
         }
 
         let resource = Resource(ship: ship, name: name)
-        let params = AddGraphParams(resource: resource,
-                                    graph: [:],
-                                    mark: nil,
-                                    overwrite: true)
-        let update = AddGraphAction(addGraph: params)
+        let update = GraphUpdate.addGraph(resource: resource, graph: Graph(), mark: nil, overwrite: true)
 
         return airlockConnection
             .requestPoke(ship: ship,
