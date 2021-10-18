@@ -6,6 +6,42 @@ import UrsusHTTP
 @testable import SwiftGraphStore
 
 final class AirlockGraphStoreConnectionTests: XCTestCase {
+    
+    func test_createPost_whenNoShip_returnsNil() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+        
+        XCTAssertNil(testObject.createPost(contents: nil))
+    }
+    
+    func test_createPost_fillsInValues() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+        
+        let ship = Ship.random
+        testObject.setShip(ship)
+        
+        let contents = [Content(text: UUID().patUVString),
+                        Content(text: UUID().uuidString)]
+        let timeSent = Date()
+        
+        let post = testObject.createPost(contents: contents, timeSent: timeSent)
+        
+        guard let post = post else {
+            XCTFail("Nil post!")
+            return
+        }
+        
+        XCTAssertEqual(post.author, ship)
+        XCTAssertEqual(post.index, "/\(Int(timeSent.timeIntervalSince1970))")
+        XCTAssertEqual(post.timeSent, timeSent)
+        XCTAssertEqual(post.contents, contents)
+        XCTAssertNil(post.hash)
+        XCTAssertEqual(post.signatures, [])
+    }
+
     func test_requestLogin_passesResultFromAirlock() throws {
         let expectedShip = try! Ship(string: "~wet")
         
@@ -66,7 +102,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
         let ship = Ship.random
-        loginAndSetShip(testObject: testObject, fakeAirlockConnection: fakeAirlockConnection, ship: ship)
+        testObject.setShip(ship)
         
         callRequestAndVerifyResponse(request: testObject.requestConnect,
                                      completionClosure: { _ in
@@ -85,8 +121,8 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
         let ship = Ship.random
-        loginAndSetShip(testObject: testObject, fakeAirlockConnection: fakeAirlockConnection, ship: ship)
-        
+        testObject.setShip(ship)
+
         let errorID = UUID().uuidString
         let expectedError = PokeError.pokeFailure(errorID)
         fakeAirlockConnection.requestPoke_error = expectedError
@@ -114,8 +150,8 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
         let ship = Ship.random
-        loginAndSetShip(testObject: testObject, fakeAirlockConnection: fakeAirlockConnection, ship: ship)
-        
+        testObject.setShip(ship)
+
         callRequestAndVerifyResponse(request: testObject.requestStartSubscription,
                                      completionClosure: { _ in
             XCTAssertEqual(fakeAirlockConnection.requestStartSubscription_calledCount, 1)
@@ -132,8 +168,8 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
         let ship = Ship.random
-        loginAndSetShip(testObject: testObject, fakeAirlockConnection: fakeAirlockConnection, ship: ship)
-        
+        testObject.setShip(ship)
+
         fakeAirlockConnection.requestStartSubscription_error = AFError.sessionTaskFailed(error: NSError())
         
         callRequestAndVerifyResponse(request: testObject.requestStartSubscription,
@@ -160,8 +196,8 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
         let ship = Ship.random
-        loginAndSetShip(testObject: testObject, fakeAirlockConnection: fakeAirlockConnection, ship: ship)
-        
+        testObject.setShip(ship)
+
         let name = UUID().uuidString
         let resource = Resource(ship: ship, name: name)
         let update = GraphUpdate.addGraph(resource: resource, graph: Graph(), mark: nil, overwrite: true)
@@ -185,13 +221,84 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
         let ship = Ship.random
-        loginAndSetShip(testObject: testObject, fakeAirlockConnection: fakeAirlockConnection, ship: ship)
-        
+        testObject.setShip(ship)
+
         let errorID = UUID().uuidString
         let expectedError = PokeError.pokeFailure(errorID)
         fakeAirlockConnection.requestPoke_error = expectedError
         
         let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddGraph(name: "") }
+        callRequestAndVerifyResponse(request: request,
+                                     failureClosure: { error in
+            XCTAssertEqual(error.errorDescription, "Poke failure: \(errorID)")
+        })
+    }
+    
+    func test_requestAddNodes_failsIfNoShip() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+        
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+                
+        let post = Post(author: Ship.random,
+                        index: "",
+                        timeSent: Date(),
+                        contents: nil,
+                        hash: nil,
+                        signatures: [])
+
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(name: "", post: post) }
+        callRequestAndVerifyResponse(request: request,
+                                     failureClosure: { error in
+            XCTAssert(error.errorDescription!.starts(with: "Poke failure"))
+        })
+    }
+
+    func test_requestAddNodes_pokesGraphStore() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+        
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+
+        let ship = Ship.random
+        testObject.setShip(ship)
+        
+        let name = UUID().uuidString
+        let resource = Resource(ship: ship, name: name)
+        
+        let post = testObject.createPost(contents: nil)!
+        let index = post.index
+        
+        let updateNodes = [index: UpdateNode(post: post, children: nil)]
+        
+        let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
+
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(name: name, post: post) }
+        callRequestAndVerifyResponse(request: request,
+                                     completionClosure: { _ in
+            XCTAssertEqual(fakeAirlockConnection.requestPoke_calledCount, 1)
+            
+            XCTAssertEqual(fakeAirlockConnection.requestPoke_paramShip, ship)
+            XCTAssertEqual(fakeAirlockConnection.requestPoke_paramApp, Constants.graphStoreAppName)
+            XCTAssertEqual(fakeAirlockConnection.requestPoke_paramMark, Constants.graphStoreUpdateMark)
+            XCTAssertEqual(fakeAirlockConnection.requestPoke_paramJson as? GraphUpdate, update)
+
+        })
+    }
+    
+    func test_requestAddNodes_whenAirlockFails_passesAlongTheFailure() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+        
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+
+        testObject.setShip(Ship.random)
+
+        let name = UUID().patUVString
+        let post = testObject.createPost(contents: nil)!
+
+        let errorID = UUID().uuidString
+        let expectedError = PokeError.pokeFailure(errorID)
+        fakeAirlockConnection.requestPoke_error = expectedError
+        
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(name: name, post: post) }
         callRequestAndVerifyResponse(request: request,
                                      failureClosure: { error in
             XCTAssertEqual(error.errorDescription, "Poke failure: \(errorID)")
@@ -204,7 +311,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
         let ship = Ship.random
-        loginAndSetShip(testObject: testObject, fakeAirlockConnection: fakeAirlockConnection, ship: ship)
+        testObject.setShip(ship)
 
         let resource = Resource(ship: ship, name: UUID().uuidString)
         let graphUpdate = GraphUpdate.addGraph(resource: resource, graph: Graph(), mark: UUID().uuidString, overwrite: Bool.random())
@@ -292,21 +399,10 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         
         wait(for: [expectation], timeout: 1)
     }
-    
-    private func loginAndSetShip(testObject: GraphStoreConnection,
-                                 fakeAirlockConnection: FakeAirlockConnection,
-                                 ship: Ship) {
-        fakeAirlockConnection.requestLogin_response = ship
-        let expectation = XCTestExpectation(description: "Fake logging in")
-        var cancellables = [AnyCancellable]()
-        
-        testObject.requestLogin()
-            .sink(receiveCompletion: { completion in
-                expectation.fulfill()
-            }, receiveValue: { _ in }
-            )
-            .store(in: &cancellables)
-        
-        wait(for: [expectation], timeout: 1)
+}
+
+fileprivate extension AirlockGraphStoreConnection {
+    func setShip(_ ship: Ship) {
+        self.ship = ship
     }
 }

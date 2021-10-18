@@ -2,13 +2,21 @@ import Foundation
 import UrsusHTTP
 
 public struct Post: Codable, Equatable {
-    let author: Ship
-    let index: String
-    let timeSent: Date
-    @NullCodable var contents: [Content]?
-    @NullCodable var hash: Int?
-    @NullCodable var signatures: [Signature]?
-//    [author=~zod index=~2021.10.16..04.01.29..14ea time-sent=~2000.1.1 contents=~ hash=~ signatures={}]
+    public let author: Ship
+    public let index: String
+    public let timeSent: Date
+    @NullCodable public var contents: [Content]?
+    @NullCodable public var hash: Int?
+    public var signatures: [Signature]
+    
+    public init(author: Ship, index: String, timeSent: Date, contents: [Content]?, hash: Int?, signatures: [Signature]) {
+        self.author = author
+        self.index = index
+        self.timeSent = timeSent
+        self.contents = contents
+        self.hash = hash
+        self.signatures = signatures
+    }
     
     enum CodingKeys: String, CodingKey {
         case author, index, contents, hash, signatures
@@ -16,4 +24,4 @@ public struct Post: Codable, Equatable {
     }
 }
 
-struct Signature: Codable, Equatable { }
+public struct Signature: Codable, Equatable { }

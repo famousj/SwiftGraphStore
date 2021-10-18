@@ -6,6 +6,8 @@ import UrsusHTTP
 public protocol GraphStoreConnection {
     var ship: Ship? { get }
     
+    func createPost(contents: [Content]?, timeSent: Date) -> Post?
+    
     var graphStoreSubscription: AnyPublisher<GraphStoreUpdate, Error> { get }
     
     func requestLogin() -> AnyPublisher<Ship, AFError>
@@ -15,4 +17,5 @@ public protocol GraphStoreConnection {
     func requestScry(path: Path) -> AnyPublisher<String, AFError>
 
     func requestAddGraph(name: Term) -> AnyPublisher<Never, PokeError>
+    func requestAddNodes(name: Term, post: Post) -> AnyPublisher<Never, PokeError>
 }

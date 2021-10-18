@@ -4,10 +4,21 @@ import Alamofire
 import UrsusHTTP
 
 public class AirlockGraphStoreConnection: GraphStoreConnection {
-    public private(set) var ship: Ship?
+    public internal(set) var ship: Ship?
     
     private let airlockConnection: AirlockConnection
     public let graphStoreSubscription: AnyPublisher<GraphStoreUpdate, Error>
+    
+    public func createPost(contents: [Content]?, timeSent: Date = Date()) -> Post? {
+        guard let ship = ship else {
+            print("Can't make a post!  Not logged in.")
+            return nil
+        }
+        
+        let index = "/\(Int(timeSent.timeIntervalSince1970))"
+
+        return Post(author: ship, index: index, timeSent: timeSent, contents: contents, hash: nil, signatures: [])
+    }
     
     public init(airlockConnection: AirlockConnection) {
         self.airlockConnection = airlockConnection
@@ -69,6 +80,26 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
 
         let resource = Resource(ship: ship, name: name)
         let update = GraphUpdate.addGraph(resource: resource, graph: Graph(), mark: nil, overwrite: true)
+
+        return airlockConnection
+            .requestPoke(ship: ship,
+                         app: Constants.graphStoreAppName,
+                         mark: Constants.graphStoreUpdateMark,
+                         json: update)
+            .eraseToAnyPublisher()
+    }
+    
+    public func requestAddNodes(name: Term, post: Post) -> AnyPublisher<Never, PokeError> {
+        guard let ship = ship else {
+            return Fail(error: PokeError.pokeFailure("Can't add a node. You aren't logged in!"))
+                .eraseToAnyPublisher()
+        }
+
+        let resource = Resource(ship: ship, name: name)
+        let index = post.index
+        let updateNodes = [index: UpdateNode(post: post, children: nil)]
+        
+        let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
 
         return airlockConnection
             .requestPoke(ship: ship,
