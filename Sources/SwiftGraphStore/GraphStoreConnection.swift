@@ -5,7 +5,8 @@ import UrsusHTTP
 
 public protocol GraphStoreConnection {
     var ship: Ship? { get }
-    
+
+    func createPost(contents: [Content]?) -> Post?
     func createPost(contents: [Content]?, timeSent: Date) -> Post?
     
     var graphStoreSubscription: AnyPublisher<GraphStoreUpdate, Error> { get }
