@@ -36,12 +36,16 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .eraseToAnyPublisher()
     }
     
-    public func requestLogin() -> AnyPublisher<Ship, AFError> {
+    public func requestLogin() -> AnyPublisher<Ship, LoginError> {
         airlockConnection
             .requestLogin()
             .map { ship in
                 self.ship = ship
                 return ship
+            }
+            .mapError { error in
+                let loginError = LoginError.fromAFError(error)
+                return loginError
             }
             .eraseToAnyPublisher()
     }

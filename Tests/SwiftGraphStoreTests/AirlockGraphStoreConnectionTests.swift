@@ -79,9 +79,11 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
         
+        let expectedError = LoginError.fromAFError(requestError)
+        
         callRequestAndVerifyResponse(request: testObject.requestLogin,
                                      failureClosure: { error in
-            XCTAssert(error.isCreateURLRequestError)
+            XCTAssertEqual(error.errorDescription, expectedError.errorDescription)
         })
     }
     

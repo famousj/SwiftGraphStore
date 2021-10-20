@@ -11,7 +11,7 @@ public protocol GraphStoreConnection {
     
     var graphStoreSubscription: AnyPublisher<GraphStoreUpdate, Error> { get }
     
-    func requestLogin() -> AnyPublisher<Ship, AFError>
+    func requestLogin() -> AnyPublisher<Ship, LoginError>
     func requestConnect() -> AnyPublisher<Never, PokeError>
     func requestStartSubscription() -> AnyPublisher<Never, AFError>
     
