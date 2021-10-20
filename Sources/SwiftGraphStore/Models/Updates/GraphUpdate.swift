@@ -21,7 +21,6 @@ public enum GraphUpdate: Codable, Equatable, Identifiable {
         case resource, nodes
     }
     
-    // TODO: Test this
     public var id: String {
         switch self {
         case .addGraph(let resource, _, _, _):

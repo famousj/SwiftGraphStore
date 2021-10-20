@@ -56,12 +56,9 @@ public enum LoginError: LocalizedError {
                 default:
                     return .loginFailed
                 }
-
             default:
                 return .loginFailed
-
             }
-            
             
         case .sessionTaskFailed(let sessionTaskError):
             if let urlError = sessionTaskError as? URLError {
