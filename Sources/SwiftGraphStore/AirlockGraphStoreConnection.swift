@@ -36,6 +36,8 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .eraseToAnyPublisher()
     }
     
+    // TODO: Automatically add some kind of http or https when it's missing from the URL
+    // TODO: Automatically upgrade your connection to https when you get this error
     public func requestLogin() -> AnyPublisher<Ship, LoginError> {
         airlockConnection
             .requestLogin()

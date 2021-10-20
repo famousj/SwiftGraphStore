@@ -4,8 +4,11 @@ import Alamofire
 public enum LoginError: LocalizedError {
     
     case offline
+    case shipNotRunning
     case invalidURL(URL?)
     case invalidHost(URL?)
+    case httpsRequired
+    case badCode
     case loginFailed
     
     public var errorDescription: String? {
@@ -18,6 +21,8 @@ public enum LoginError: LocalizedError {
             } else {
                 return "Invalid URL"
             }
+        case .httpsRequired:
+            return "You need to use HTTPS to connect to your ship!"
         case .invalidHost(let url):
             var error: String
             if let url = url,
@@ -26,28 +31,51 @@ public enum LoginError: LocalizedError {
             } else {
                 error = "Couldn't connect to your URL."
             }
-            return error + " Please check your URL and try again."
+            return error + " Check your URL and try again."
+        case .shipNotRunning:
+            return "Could not connect to the URL.  Make sure your ship is running."
+        case .badCode:
+            return "Your code did not work.  Check your code and URL, and try again"
         case .loginFailed:
-            return "Couldn't log in! Please check your URL and code, and then try again."
+            return "Check your URL and code, and then try again."
         }
     }
     
-    // TODO: test this
     static func fromAFError(_ error: AFError) -> LoginError {
         switch error {
-        case .invalidURL(let url):
-            return .invalidURL(try? url.asURL())
-        case .responseValidationFailed:
-            return .loginFailed
+        case .responseValidationFailed(let reason):
+            switch reason {
+            case .unacceptableStatusCode(let code):
+                switch code {
+                case 400:
+                    return .badCode
+                case 404:
+                    return .invalidHost(error.url)
+                case 502:
+                    return .invalidHost(error.url)
+                default:
+                    return .loginFailed
+                }
+
+            default:
+                return .loginFailed
+
+            }
+            
+            
         case .sessionTaskFailed(let sessionTaskError):
             if let urlError = sessionTaskError as? URLError {
                 switch urlError.code {
-                case .badURL:
-                    return .invalidURL(urlError.failingURL)
+                case .appTransportSecurityRequiresSecureConnection:
+                    return .httpsRequired
+                case .cannotConnectToHost:
+                    return .shipNotRunning
                 case .unsupportedURL:
                     return .invalidURL(urlError.failingURL)
                 case .notConnectedToInternet:
                     return .offline
+                case .cannotFindHost:
+                    return .invalidHost(urlError.failingURL)
                 default:
                     return .loginFailed
                 }
