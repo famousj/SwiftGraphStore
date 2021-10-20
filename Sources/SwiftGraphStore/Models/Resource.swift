@@ -8,7 +8,6 @@ public struct Resource: Codable, Equatable, Identifiable {
     public let ship: Ship
     public let name: Term
     
-    // TODO: Test this
     public var id: String {
         "\(ship)/\(name)"
     }
