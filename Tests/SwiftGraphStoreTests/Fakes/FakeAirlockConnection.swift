@@ -53,18 +53,18 @@ class FakeAirlockConnection: AirlockConnection {
     var requestScry_paramPath: Path?
     
     var requestScry_error: AFError?
-    var requestScry_response: Data?
-    func requestScry(app: App, path: Path) -> AnyPublisher<Data, AFError> {
+    var requestScry_response: Decodable?
+    func requestScry<T: Decodable>(app: App, path: Path) -> AnyPublisher<T, AFError> {
         requestScry_calledCount += 1
         
         requestScry_paramApp = app
         requestScry_paramPath = path
         
         if let error = requestScry_error {
-            return Fail(outputType: Data.self, failure: error)
+            return Fail(outputType: T.self, failure: error)
                 .eraseToAnyPublisher()
         } else {
-            return Just(requestScry_response!)
+            return Just(requestScry_response! as! T)
                 .asAlamofirePublisher()
         }
     }
