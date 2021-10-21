@@ -185,7 +185,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddGraph(name: "") }
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddGraph(resource: Resource.testInstance) }
         callRequestAndVerifyResponse(request: request,
                                      failureClosure: { error in
             XCTAssert(error.errorDescription!.starts(with: "Poke failure"))
@@ -200,14 +200,13 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let ship = Ship.random
         testObject.setShip(ship)
 
-        let name = UUID().uuidString
-        let resource = Resource(ship: ship, name: name)
+        let resource = Resource.testInstance
         let update = GraphUpdate.addGraph(resource: resource,
                                           graph: [:],
                                           mark: nil,
                                           overwrite: true)
         
-        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddGraph(name: name) }
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddGraph(resource: resource) }
         callRequestAndVerifyResponse(request: request,
                                      completionClosure: { _ in
             XCTAssertEqual(fakeAirlockConnection.requestPoke_calledCount, 1)
@@ -232,7 +231,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let expectedError = PokeError.pokeFailure(errorID)
         fakeAirlockConnection.requestPoke_error = expectedError
         
-        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddGraph(name: "") }
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddGraph(resource: Resource.testInstance) }
         callRequestAndVerifyResponse(request: request,
                                      failureClosure: { error in
             XCTAssertEqual(error.errorDescription, "Poke failure: \(errorID)")
@@ -246,7 +245,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
                 
         let post = Post.testInstance
 
-        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(name: "", post: post) }
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(resource: Resource.testInstance, post: post) }
         callRequestAndVerifyResponse(request: request,
                                      failureClosure: { error in
             XCTAssert(error.errorDescription!.starts(with: "Poke failure"))
@@ -261,9 +260,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let ship = Ship.random
         testObject.setShip(ship)
         
-        let name = UUID().uuidString
-        let resource = Resource(ship: ship, name: name)
-        
+        let resource = Resource.testInstance
         let post = Post.testInstance
         let index = post.index
         
@@ -271,7 +268,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         
         let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
 
-        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(name: name, post: post) }
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(resource: resource, post: post) }
         callRequestAndVerifyResponse(request: request,
                                      completionClosure: { _ in
             XCTAssertEqual(fakeAirlockConnection.requestPoke_calledCount, 1)
@@ -291,14 +288,14 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
 
         testObject.setShip(Ship.random)
 
-        let name = UUID().patUVString
+        let resource = Resource.testInstance
         let post = Post.testInstance
 
         let errorID = UUID().uuidString
         let expectedError = PokeError.pokeFailure(errorID)
         fakeAirlockConnection.requestPoke_error = expectedError
         
-        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(name: name, post: post) }
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(resource: resource, post: post) }
         callRequestAndVerifyResponse(request: request,
                                      failureClosure: { error in
             XCTAssertEqual(error.errorDescription, "Poke failure: \(errorID)")
@@ -370,7 +367,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
         
-        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadGraph(name: "") }
+        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadGraph(resource: Resource.testInstance) }
         callRequestAndVerifyResponse(request: request,
                                      failureClosure: { error in
             
@@ -389,14 +386,17 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let ship = Ship.random
         testObject.setShip(ship)
         
+        let resourceShip = Ship.random
         let name = UUID().uuidString
-        let expectedPath = "/graph/\(ship)/\(name)"
+        let resource = Resource(ship: resourceShip, name: name)
+        
+        let expectedPath = "/graph/\(resourceShip)/\(name)"
         
         let addGraphUpdate = GraphUpdate.addGraphTestInstance
         let graphStoreUpdate = GraphStoreUpdate(graphUpdate: addGraphUpdate)
         fakeAirlockConnection.requestScry_response = graphStoreUpdate
         
-        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadGraph(name: name) }
+        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadGraph(resource: resource) }
         callRequestAndVerifyResponse(request: request,
                                      completionClosure: { _ in
             
@@ -416,14 +416,12 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let ship = Ship.random
         testObject.setShip(ship)
         
-        let name = UUID().uuidString
-
         let graphUpdate = GraphUpdate.addGraphTestInstance
         let expectedUpdate = GraphStoreUpdate(graphUpdate: graphUpdate)
         
         fakeAirlockConnection.requestScry_response = expectedUpdate
         
-        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadGraph(name: name) }
+        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadGraph(resource: Resource.testInstance) }
         callRequestAndVerifyResponse(request: request,
                                      successClosure: { value in
           XCTAssertEqual(value, expectedUpdate)
@@ -437,11 +435,9 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
 
         testObject.setShip(Ship.random)
 
-        let name = UUID().patUVString
-
         fakeAirlockConnection.requestScry_error = AFError.responseValidationFailed(reason: .dataFileNil)
         
-        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadGraph(name: name) }
+        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadGraph(resource: Resource.testInstance) }
         callRequestAndVerifyResponse(request: request,
                                      failureClosure: { error in
             guard case .scryFailed = error else {

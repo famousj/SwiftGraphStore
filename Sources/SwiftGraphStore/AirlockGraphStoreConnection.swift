@@ -72,13 +72,12 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .requestStartSubscription(ship: ship, app: Constants.graphStoreAppName, path: Constants.graphStoreUpdatePath)
     }
     
-    public func requestAddGraph(name: Term) -> AnyPublisher<Never, PokeError> {
+    public func requestAddGraph(resource: Resource) -> AnyPublisher<Never, PokeError> {
         guard let ship = ship else {
             return Fail(error: PokeError.pokeFailure("Can't add a graph. You aren't logged in!"))
                 .eraseToAnyPublisher()
         }
 
-        let resource = Resource(ship: ship, name: name)
         let update = GraphUpdate.addGraph(resource: resource, graph: [:], mark: nil, overwrite: true)
 
         return airlockConnection
@@ -89,13 +88,12 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .eraseToAnyPublisher()
     }
     
-    public func requestAddNodes(name: Term, post: Post) -> AnyPublisher<Never, PokeError> {
+    public func requestAddNodes(resource: Resource, post: Post) -> AnyPublisher<Never, PokeError> {
         guard let ship = ship else {
             return Fail(error: PokeError.pokeFailure("Can't add a node. You aren't logged in!"))
                 .eraseToAnyPublisher()
         }
 
-        let resource = Resource(ship: ship, name: name)
         let index = post.index
         let updateNodes = [index: Graph(post: post, children: nil)]
         
@@ -109,13 +107,13 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .eraseToAnyPublisher()
     }
     
-    public func requestReadGraph(name: Term) -> AnyPublisher<GraphStoreUpdate, ScryError> {
-        guard let ship = ship else {
+    public func requestReadGraph(resource: Resource) -> AnyPublisher<GraphStoreUpdate, ScryError> {
+        guard let _ = ship else {
             return Fail(error: .notLoggedIn)
                 .eraseToAnyPublisher()
         }
 
-        let path = "/graph/\(ship)/\(name)"
+        let path = "/graph/\(resource.ship)/\(resource.name)"
 
         return airlockConnection
             .requestScry(app: Constants.graphStoreAppName, path: path)
