@@ -1,6 +1,7 @@
 import Foundation
 
-public enum GraphUpdate: Codable, Equatable, Identifiable {
+public enum GraphUpdate: Codable, Equatable {
+
     case addGraph(resource: Resource,
                   graph: [String: Graph],
                   mark: String?,
@@ -20,15 +21,6 @@ public enum GraphUpdate: Codable, Equatable, Identifiable {
     
     enum AddNodesCodingKeys: String, CodingKey {
         case resource, nodes
-    }
-    
-    public var id: String {
-        switch self {
-        case .addGraph(let resource, _, _, _):
-            return resource.id
-        case .addNodes(let resource, _):
-            return resource.id
-        }
     }
     
     public func encode(to encoder: Encoder) throws {
