@@ -5,7 +5,6 @@ import UrsusHTTP
 import UrsusAtom
 
 public class UrsusHTTPConnection: AirlockConnection {
-    
     private var graphStoreSubject = PassthroughSubject<Data, SubscribeError>()
     public var graphStoreSubscription: AnyPublisher<Data, SubscribeError> {
         graphStoreSubject.eraseToAnyPublisher()
@@ -50,25 +49,20 @@ public class UrsusHTTPConnection: AirlockConnection {
             .eraseToAnyPublisher()
     }
     
-    // TODO: Return Update
-    public func requestScry(app: App, path: Path) -> AnyPublisher<Data, AFError> {
-        let subject = PassthroughSubject<Data, AFError>()
+    public func requestScry<T: Decodable>(app: App, path: Path) -> AnyPublisher<T, AFError> {
+        let subject = PassthroughSubject<T, AFError>()
         
         self.client
             .scryRequest(app: app, path: path)
-            .response { response in
+            .responseDecodable(completionHandler: { (response: DataResponse<T, AFError>) in
                 switch response.result {
-                case .success(let data):
-                    guard let data = data else {
-                        subject.send(completion: .failure(AFError.responseValidationFailed(reason: .dataFileNil)))
-                        return
-                    }
-                    subject.send(data)
+                case .success(let value):
+                    subject.send(value)
                     subject.send(completion: .finished)
                 case .failure(let error):
                     subject.send(completion: .failure(error))
                 }
-            }
+            })
             
         return subject.eraseToAnyPublisher()
     }
