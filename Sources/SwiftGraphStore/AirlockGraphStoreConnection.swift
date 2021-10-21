@@ -72,9 +72,9 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .requestStartSubscription(ship: ship, app: Constants.graphStoreAppName, path: Constants.graphStoreUpdatePath)
     }
     
-    public func requestScry(path: Path) -> AnyPublisher<String, AFError> {
+    public func requestScry(path: Path) -> AnyPublisher<String, ScryError> {
         guard let _ = ship else {
-            return Fail(error: AFError.createURLRequestFailed(error: NSError()))
+            return Fail(error: .notLoggedIn)
                 .eraseToAnyPublisher()
         }
         
@@ -83,6 +83,7 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .map { data in
                 return String(data: data, encoding: .utf8) ?? "Invalid scry data"
             }
+            .mapError { ScryError.fromAFError($0) }
             .eraseToAnyPublisher()
     }
 
