@@ -91,6 +91,11 @@ class FakeAirlockConnection: AirlockConnection {
         }
     }
     
+    func requestTestScry(app: App, path: Path) -> AnyPublisher<String, AFError> {
+        Fail(error: AFError.responseValidationFailed(reason: .dataFileNil))
+            .eraseToAnyPublisher()
+    }
+    
     private func neverPublisher<E: Error>() -> AnyPublisher<Never, E> {
         Just(true)
             .ignoreOutput()
