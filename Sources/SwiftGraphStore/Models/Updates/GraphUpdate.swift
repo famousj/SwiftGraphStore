@@ -2,11 +2,12 @@ import Foundation
 
 public enum GraphUpdate: Codable, Equatable, Identifiable {
     case addGraph(resource: Resource,
-                  graph: Graph,
+                  graph: [String: Graph],
                   mark: String?,
                   overwrite: Bool)
     case addNodes(resource: Resource,
-                  nodes: [String: UpdateNode])
+                  nodes: [String: Graph])
+
     
     enum CodingKeys: String, CodingKey {
         case addGraph = "add-graph"

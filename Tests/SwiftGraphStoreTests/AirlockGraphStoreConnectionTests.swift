@@ -202,7 +202,10 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
 
         let name = UUID().uuidString
         let resource = Resource(ship: ship, name: name)
-        let update = GraphUpdate.addGraph(resource: resource, graph: Graph(), mark: nil, overwrite: true)
+        let update = GraphUpdate.addGraph(resource: resource,
+                                          graph: [:],
+                                          mark: nil,
+                                          overwrite: true)
         
         let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddGraph(name: name) }
         callRequestAndVerifyResponse(request: request,
@@ -269,7 +272,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let post = testObject.createPost(contents: nil)!
         let index = post.index
         
-        let updateNodes = [index: UpdateNode(post: post, children: nil)]
+        let updateNodes = [index: Graph(post: post, children: nil)]
         
         let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
 
@@ -316,7 +319,10 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         testObject.setShip(ship)
 
         let resource = Resource(ship: ship, name: UUID().uuidString)
-        let graphUpdate = GraphUpdate.addGraph(resource: resource, graph: Graph(), mark: UUID().uuidString, overwrite: Bool.random())
+        let graphUpdate = GraphUpdate.addGraph(resource: resource,
+                                               graph: [:],
+                                               mark: UUID().uuidString,
+                                               overwrite: Bool.random())
         let expectedUpdate = GraphStoreUpdate(graphUpdate: graphUpdate)
         
         var cancellables = [AnyCancellable]()

@@ -80,6 +80,10 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
         
         return airlockConnection
             .requestScry(app: Constants.graphStoreAppName, path: path)
+            .map { data in
+                return String(data: data, encoding: .utf8) ?? "Invalid scry data"
+            }
+            .eraseToAnyPublisher()
     }
 
     public func requestAddGraph(name: Term) -> AnyPublisher<Never, PokeError> {
@@ -89,7 +93,7 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
         }
 
         let resource = Resource(ship: ship, name: name)
-        let update = GraphUpdate.addGraph(resource: resource, graph: Graph(), mark: nil, overwrite: true)
+        let update = GraphUpdate.addGraph(resource: resource, graph: [:], mark: nil, overwrite: true)
 
         return airlockConnection
             .requestPoke(ship: ship,
@@ -107,7 +111,7 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
 
         let resource = Resource(ship: ship, name: name)
         let index = post.index
-        let updateNodes = [index: UpdateNode(post: post, children: nil)]
+        let updateNodes = [index: Graph(post: post, children: nil)]
         
         let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
 

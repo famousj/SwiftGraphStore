@@ -1,0 +1,29 @@
+{
+  "graph-update": {
+    "add-graph": {
+      "graph": {
+        "1634759937": {
+          "post": {
+            "index": "/1634759937",
+            "author": "zod",
+            "time-sent": 1634759937236,
+            "signatures": [],
+            "contents": [
+              {
+                "text": "This is test content right here"
+              }
+            ],
+            "hash": null
+          },
+          "children": null
+        }
+      },
+      "resource": {
+        "name": "super-test-graph",
+        "ship": "zod"
+      },
+      "mark": null,
+      "overwrite": true
+    }
+  }
+}
