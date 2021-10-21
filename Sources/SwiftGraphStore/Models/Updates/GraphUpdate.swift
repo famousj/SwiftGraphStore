@@ -75,3 +75,16 @@ public enum GraphUpdate: Codable, Equatable {
         self = .addNodes(resource: resource, nodes: nodes)
     }
 }
+
+extension GraphUpdate: Identifiable {
+    public var id: String {
+        switch self {
+        case .addGraph(let resource, _, _, _):
+            return resource.id
+        case .addNodes(let resource, _):
+            return resource.id
+        case .keys(let keys):
+            return keys.first?.id ?? ""
+        }
+    }
+}
