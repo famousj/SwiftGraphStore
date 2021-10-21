@@ -1,0 +1,14 @@
+{
+  "graph-update": {
+    "keys": [
+      {
+        "name": "dm-inbox",
+        "ship": "zod"
+      },
+      {
+        "name": "super-test-graph",
+        "ship": "zod"
+      }
+    ]
+  }
+}
