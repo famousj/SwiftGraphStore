@@ -72,21 +72,6 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .requestStartSubscription(ship: ship, app: Constants.graphStoreAppName, path: Constants.graphStoreUpdatePath)
     }
     
-    public func requestScry(path: Path) -> AnyPublisher<String, ScryError> {
-        guard let _ = ship else {
-            return Fail(error: .notLoggedIn)
-                .eraseToAnyPublisher()
-        }
-        
-        return airlockConnection
-            .requestScry(app: Constants.graphStoreAppName, path: path)
-            .map { data in
-                return String(data: data, encoding: .utf8) ?? "Invalid scry data"
-            }
-            .mapError { ScryError.fromAFError($0) }
-            .eraseToAnyPublisher()
-    }
-
     public func requestAddGraph(name: Term) -> AnyPublisher<Never, PokeError> {
         guard let ship = ship else {
             return Fail(error: PokeError.pokeFailure("Can't add a graph. You aren't logged in!"))
@@ -121,6 +106,20 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
                          app: Constants.graphStoreAppName,
                          mark: Constants.graphStoreUpdateMark,
                          json: update)
+            .eraseToAnyPublisher()
+    }
+    
+    public func requestReadGraph(name: Term) -> AnyPublisher<GraphStoreUpdate, ScryError> {
+        guard let ship = ship else {
+            return Fail(error: .notLoggedIn)
+                .eraseToAnyPublisher()
+        }
+
+        let path = "/graph/\(ship)/\(name)"
+
+        return airlockConnection
+            .requestScry(app: Constants.graphStoreAppName, path: path)
+            .mapError { ScryError.fromAFError($0) }
             .eraseToAnyPublisher()
     }
 }
