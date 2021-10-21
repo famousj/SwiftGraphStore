@@ -244,12 +244,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
                 
-        let post = Post(author: Ship.random,
-                        index: "",
-                        timeSent: Date(),
-                        contents: nil,
-                        hash: nil,
-                        signatures: [])
+        let post = Post.testInstance
 
         let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(name: "", post: post) }
         callRequestAndVerifyResponse(request: request,
@@ -269,7 +264,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let name = UUID().uuidString
         let resource = Resource(ship: ship, name: name)
         
-        let post = testObject.createPost(contents: nil)!
+        let post = Post.testInstance
         let index = post.index
         
         let updateNodes = [index: Graph(post: post, children: nil)]
@@ -297,7 +292,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         testObject.setShip(Ship.random)
 
         let name = UUID().patUVString
-        let post = testObject.createPost(contents: nil)!
+        let post = Post.testInstance
 
         let errorID = UUID().uuidString
         let expectedError = PokeError.pokeFailure(errorID)
@@ -318,11 +313,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let ship = Ship.random
         testObject.setShip(ship)
 
-        let resource = Resource(ship: ship, name: UUID().uuidString)
-        let graphUpdate = GraphUpdate.addGraph(resource: resource,
-                                               graph: [:],
-                                               mark: UUID().uuidString,
-                                               overwrite: Bool.random())
+        let graphUpdate = GraphUpdate.addGraphTestInstance
         let expectedUpdate = GraphStoreUpdate(graphUpdate: graphUpdate)
         
         var cancellables = [AnyCancellable]()
