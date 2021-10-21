@@ -120,4 +120,16 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .mapError { ScryError.fromAFError($0) }
             .eraseToAnyPublisher()
     }
+    
+    public func requestTestScry(resource: Resource, path: Path) -> AnyPublisher<String, ScryError> {
+        guard let _ = ship else {
+            return Fail(error: .notLoggedIn)
+                .eraseToAnyPublisher()
+        }
+        
+        return airlockConnection
+            .requestTestScry(app: Constants.graphStoreAppName, path: path)
+            .mapError { ScryError.fromAFError($0) }
+            .eraseToAnyPublisher()
+    }
 }

@@ -19,4 +19,6 @@ public protocol GraphStoreConnection {
     func requestAddNodes(resource: Resource, post: Post) -> AnyPublisher<Never, PokeError>
     
     func requestReadGraph(resource: Resource) -> AnyPublisher<GraphStoreUpdate, ScryError>
+    
+    func requestTestScry(resource: Resource, path: Path) -> AnyPublisher<String, ScryError>
 }

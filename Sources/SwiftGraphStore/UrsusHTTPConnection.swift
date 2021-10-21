@@ -63,10 +63,10 @@ public class UrsusHTTPConnection: AirlockConnection {
                     subject.send(completion: .failure(error))
                 }
             })
-            
+        
         return subject.eraseToAnyPublisher()
     }
-
+    
     public func requestStartSubscription(ship: Ship, app: App, path: Path) -> AnyPublisher<Never, AFError> {
         let subject = PassthroughSubject<Never, AFError>()
         
@@ -95,4 +95,30 @@ public class UrsusHTTPConnection: AirlockConnection {
         
         return subject.eraseToAnyPublisher()
     }
+    
+    // NOTE: This function is for testing purposes, to grab the raw output for a scry
+    public func requestTestScry(app: App, path: Path) -> AnyPublisher<String, AFError> {
+        let subject = PassthroughSubject<String, AFError>()
+        
+        self.client
+            .scryRequest(app: app, path: path)
+            .response(completionHandler: { response in
+                switch response.result {
+                case .success(let data):
+                    guard let data = data,
+                          let string = String(data: data, encoding: .utf8) else {
+                              print("Scry returned nil")
+                              subject.send(completion: .failure(AFError.responseValidationFailed(reason: .dataFileNil)))
+                              return
+                          }
+                    subject.send(string)
+                    subject.send(completion: .finished)
+                case .failure(let error):
+                    subject.send(completion: .failure(error))
+                }
+            })
+        
+        return subject.eraseToAnyPublisher()
+    }
+    
 }
