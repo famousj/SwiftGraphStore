@@ -13,8 +13,18 @@ Therefore, don't use this in anything important until this disclaimer is gone.
 
 Graph Store docs can be found [here](https://urbit.org/docs/userspace/graph-store/overview).
 
+[Also here](https://urbit.org/docs/userspace/landscape/reference/graph-store).
+
+Although the most accurate up-to-date information is in `%landscape/app/graph-store.hoon`
+
 Graph Store runs on gall.  Please peruse the [Gall Guide](https://github.com/timlucmiptev/gall-guide) for details about that.
 
 ## Contact
 
 Best way to get a hold of me with questions is to DM me: `~ribben-donnyl`
+
+## TODO
+
+- Tags
+- Archives
+
