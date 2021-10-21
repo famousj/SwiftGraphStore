@@ -19,4 +19,10 @@ internal extension GraphUpdate {
         let index = graph.post.index
         return .addNodes(resource: resource, nodes: [index: graph])
     }
+    
+    static var keysTestInstance: GraphUpdate {
+        let count = Int.random(in: 0...5)
+        let keys = (0...count).map { _ in Resource.testInstance }        
+        return .keys(keys)
+    }
 }

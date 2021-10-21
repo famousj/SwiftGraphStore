@@ -382,9 +382,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let fakeAirlockConnection = FakeAirlockConnection()
         
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
-
-        let ship = Ship.random
-        testObject.setShip(ship)
+        testObject.setShip(Ship.random)
         
         let resourceShip = Ship.random
         let name = UUID().uuidString
@@ -432,7 +430,6 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let fakeAirlockConnection = FakeAirlockConnection()
         
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
-
         testObject.setShip(Ship.random)
 
         fakeAirlockConnection.requestScry_error = AFError.responseValidationFailed(reason: .dataFileNil)
@@ -447,6 +444,73 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         })
     }
 
+    func test_requestReadKeys_failsIfNoShip() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+        
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+        
+        callRequestAndVerifyResponse(request: testObject.requestReadKeys,
+                                     failureClosure: { error in
+            guard case .notLoggedIn = error else {
+                XCTFail("LoginError should have been .invalidHost")
+                return
+            }
+        })
+    }
+    
+    func test_requestReadKeys_scriesGraphStore() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+        testObject.setShip(Ship.random)
+
+        let expectedPath = "/keys"
+
+        let graphStoreUpdate = GraphStoreUpdate(graphUpdate: GraphUpdate.keysTestInstance)
+        fakeAirlockConnection.requestScry_response = graphStoreUpdate
+
+        callRequestAndVerifyResponse(request: testObject.requestReadKeys,
+                                     completionClosure: { _ in
+            XCTAssertEqual(fakeAirlockConnection.requestScry_calledCount, 1)
+
+            XCTAssertEqual(fakeAirlockConnection.requestScry_paramApp, Constants.graphStoreAppName)
+            XCTAssertEqual(fakeAirlockConnection.requestScry_paramPath,
+                           expectedPath)
+        })
+    }
+
+    func test_requestReadKeys_returnsExpectedValue() {
+        let fakeAirlockConnection = FakeAirlockConnection()
+        
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+        testObject.setShip(Ship.random)
+        
+        let expectedUpdate = GraphStoreUpdate(graphUpdate: GraphUpdate.keysTestInstance)
+        fakeAirlockConnection.requestScry_response = expectedUpdate
+        
+        callRequestAndVerifyResponse(request: testObject.requestReadKeys,
+                                     successClosure: { value in
+            XCTAssertEqual(value, expectedUpdate)
+        })
+    }
+
+    func test_requestReadKeys_whenAirlockFails_passesAlongTheConvertedFailure() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+        testObject.setShip(Ship.random)
+
+        fakeAirlockConnection.requestScry_error = AFError.responseValidationFailed(reason: .dataFileNil)
+
+        callRequestAndVerifyResponse(request: testObject.requestReadKeys,
+                                     failureClosure: { error in
+            guard case .scryFailed = error else {
+                XCTFail("Unexpected failure")
+                return
+            }
+        })
+    }
+    
     private func callRequestAndVerifyResponse<T, E: Error>(request: () -> AnyPublisher<T, E>,
                                                  successClosure: ((T) -> Void)? = nil,
                                                  failureClosure: ((E) -> Void)? = nil,
