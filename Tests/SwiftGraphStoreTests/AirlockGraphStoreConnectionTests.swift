@@ -265,7 +265,6 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let index = post.index
         
         let updateNodes = [index: Graph(post: post, children: nil)]
-        
         let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
 
         let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(resource: resource, post: post) }
@@ -277,7 +276,6 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
             XCTAssertEqual(fakeAirlockConnection.requestPoke_paramApp, Constants.graphStoreAppName)
             XCTAssertEqual(fakeAirlockConnection.requestPoke_paramMark, Constants.graphStoreUpdateMark)
             XCTAssertEqual(fakeAirlockConnection.requestPoke_paramJson as? GraphUpdate, update)
-
         })
     }
     

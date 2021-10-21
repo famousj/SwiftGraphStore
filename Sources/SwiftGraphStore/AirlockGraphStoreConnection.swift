@@ -73,38 +73,17 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
     }
     
     public func requestAddGraph(resource: Resource) -> AnyPublisher<Never, PokeError> {
-        guard let ship = ship else {
-            return Fail(error: PokeError.pokeFailure("Can't add a graph. You aren't logged in!"))
-                .eraseToAnyPublisher()
-        }
-
         let update = GraphUpdate.addGraph(resource: resource, graph: [:], mark: nil, overwrite: true)
-
-        return airlockConnection
-            .requestPoke(ship: ship,
-                         app: Constants.graphStoreAppName,
-                         mark: Constants.graphStoreUpdateMark,
-                         json: update)
-            .eraseToAnyPublisher()
+        
+        return doPoke(update: update, actionMessage: "add a graph")
     }
     
     public func requestAddNodes(resource: Resource, post: Post) -> AnyPublisher<Never, PokeError> {
-        guard let ship = ship else {
-            return Fail(error: PokeError.pokeFailure("Can't add a node. You aren't logged in!"))
-                .eraseToAnyPublisher()
-        }
-
         let index = post.index
         let updateNodes = [index: Graph(post: post, children: nil)]
-        
         let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
-
-        return airlockConnection
-            .requestPoke(ship: ship,
-                         app: Constants.graphStoreAppName,
-                         mark: Constants.graphStoreUpdateMark,
-                         json: update)
-            .eraseToAnyPublisher()
+        
+        return doPoke(update: update, actionMessage: "add a node")
     }
     
     public func requestReadGraph(resource: Resource) -> AnyPublisher<GraphStoreUpdate, ScryError> {
@@ -124,6 +103,20 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
         return airlockConnection
             .requestTestScry(app: Constants.graphStoreAppName, path: path)
             .mapError { ScryError.fromAFError($0) }
+            .eraseToAnyPublisher()
+    }
+    
+    private func doPoke<T: Encodable>(update: T, actionMessage: String) -> AnyPublisher<Never, PokeError> {
+        guard let ship = ship else {
+            return Fail(error: PokeError.pokeFailure("Can't \(actionMessage). You aren't logged in!"))
+                .eraseToAnyPublisher()
+        }
+
+        return airlockConnection
+            .requestPoke(ship: ship,
+                         app: Constants.graphStoreAppName,
+                         mark: Constants.graphStoreUpdateMark,
+                         json: update)
             .eraseToAnyPublisher()
     }
     

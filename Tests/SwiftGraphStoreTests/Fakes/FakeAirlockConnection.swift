@@ -32,7 +32,7 @@ class FakeAirlockConnection: AirlockConnection {
     var requestPoke_paramMark: Mark?
     var requestPoke_paramJson: Encodable?
     var requestPoke_error: PokeError?
-    func requestPoke<T>(ship: Ship, app: App, mark: Mark, json: T) -> AnyPublisher<Never, PokeError> where T : Encodable {
+    func requestPoke<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T) -> AnyPublisher<Never, PokeError> {
         requestPoke_calledCount += 1
         requestPoke_paramShip = ship
         requestPoke_paramApp = app
