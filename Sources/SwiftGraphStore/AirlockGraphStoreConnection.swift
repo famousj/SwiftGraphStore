@@ -62,14 +62,16 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .requestPoke(ship: ship, app: "hood", mark: "helm-hi", json: "airlock connected")
     }
     
-    public func requestStartSubscription() -> AnyPublisher<Never, AFError> {
+    public func requestStartSubscription() -> AnyPublisher<Never, StartSubscriptionError> {
         guard let ship = ship else {
-            return Fail(error: AFError.createURLRequestFailed(error: NSError()))
+            return Fail(error: .notLoggedIn)
                 .eraseToAnyPublisher()
         }
         
         return airlockConnection
             .requestStartSubscription(ship: ship, app: Constants.graphStoreAppName, path: Constants.graphStoreUpdatePath)
+            .mapError { .fromAFError($0) }
+            .eraseToAnyPublisher()
     }
     
     public func requestAddGraph(resource: Resource) -> AnyPublisher<Never, PokeError> {

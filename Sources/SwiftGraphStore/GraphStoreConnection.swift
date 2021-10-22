@@ -1,6 +1,5 @@
 import Foundation
 import Combine
-import Alamofire
 import UrsusHTTP
 
 public protocol GraphStoreConnection {
@@ -13,7 +12,7 @@ public protocol GraphStoreConnection {
 
     func requestLogin() -> AnyPublisher<Ship, LoginError>
     func requestConnect() -> AnyPublisher<Never, PokeError>
-    func requestStartSubscription() -> AnyPublisher<Never, AFError>
+    func requestStartSubscription() -> AnyPublisher<Never, StartSubscriptionError>
     
     func requestAddGraph(resource: Resource) -> AnyPublisher<Never, PokeError>
     func requestAddNodes(resource: Resource, post: Post) -> AnyPublisher<Never, PokeError>

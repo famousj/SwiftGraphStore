@@ -140,9 +140,12 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        callRequestAndVerifyResponse(request: testObject.requestConnect,
+        callRequestAndVerifyResponse(request: testObject.requestStartSubscription,
                                      failureClosure: { error in
-            XCTAssert(error.errorDescription!.starts(with: "Poke failure"))
+            guard case .notLoggedIn = error else {
+                XCTFail("Unexpected failure")
+                return
+            }
         })
     }
     
@@ -169,15 +172,19 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
+        
         let ship = Ship.random
         testObject.setShip(ship)
 
-        fakeAirlockConnection.requestStartSubscription_error = AFError.sessionTaskFailed(error: NSError())
+        let afError = AFError.urlRequestValidationFailed(reason: .bodyDataInGETRequest(Data()))
+        fakeAirlockConnection.requestStartSubscription_error = afError
         
         callRequestAndVerifyResponse(request: testObject.requestStartSubscription,
                                      failureClosure: { error in
-            XCTAssert(error.isSessionTaskError)
-        })
+            guard case .startSubscriptionFailed(afError.errorDescription) = error else {
+                XCTFail("Unexpected failure")
+                return
+            }        })
     }
         
     func test_requestAddGraph_failsIfNoShip() throws {
@@ -430,12 +437,13 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
         testObject.setShip(Ship.random)
 
-        fakeAirlockConnection.requestScry_error = AFError.responseValidationFailed(reason: .dataFileNil)
+        let afError = AFError.urlRequestValidationFailed(reason: .bodyDataInGETRequest(Data()))
+        fakeAirlockConnection.requestScry_error = afError
         
         let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadGraph(resource: Resource.testInstance) }
         callRequestAndVerifyResponse(request: request,
                                      failureClosure: { error in
-            guard case .scryFailed = error else {
+            guard case .scryFailed(afError.errorDescription) = error else {
                 XCTFail("Unexpected failure")
                 return
             }
