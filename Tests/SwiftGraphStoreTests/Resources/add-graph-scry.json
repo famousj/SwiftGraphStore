@@ -2,11 +2,41 @@
   "graph-update": {
     "add-graph": {
       "graph": {
-        "1634759937": {
+        "1634657364": {
           "post": {
-            "index": "/1634759937",
+            "index": "/1634657364",
             "author": "zod",
-            "time-sent": 1634759937236,
+            "time-sent": 1634657364409,
+            "signatures": [],
+            "contents": [
+              {
+                "text": "This is test content right here"
+              }
+            ],
+            "hash": null
+          },
+          "children": null
+        },
+        "1634836146": {
+          "post": {
+            "index": "/1634836146",
+            "author": "zod",
+            "time-sent": 1634836146443,
+            "signatures": [],
+            "contents": [
+              {
+                "text": "This is test content right here"
+              }
+            ],
+            "hash": null
+          },
+          "children": null
+        },
+        "1634918501": {
+          "post": {
+            "index": "/1634918501",
+            "author": "zod",
+            "time-sent": 1634918501701,
             "signatures": [],
             "contents": [
               {
