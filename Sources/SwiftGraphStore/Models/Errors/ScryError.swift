@@ -9,9 +9,9 @@ public enum ScryError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .notLoggedIn:
-            return "Unable read from ship: you aren't logged in!"
+            return "you aren't logged in!"
         case .scryFailed(let message):
-            return "Unable to read from ship: \(message)"
+            return message
         }
     }
     
