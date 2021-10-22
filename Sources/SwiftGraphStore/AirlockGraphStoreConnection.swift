@@ -89,11 +89,11 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
     }
     
     public func requestReadGraph(resource: Resource) -> AnyPublisher<GraphStoreUpdate, ScryError> {
-        doScry(path: "/graph/\(resource.ship)/\(resource.name)")
+        doScry(path: .graph(resource: resource))
     }
     
     public func requestReadKeys() -> AnyPublisher<GraphStoreUpdate, ScryError> {
-        doScry(path: "/keys")
+        doScry(path: .keys)
     }
     
     public func requestTestScry(resource: Resource, path: Path) -> AnyPublisher<String, ScryError> {
@@ -122,14 +122,14 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
             .eraseToAnyPublisher()
     }
     
-    private func doScry(path: Path) -> AnyPublisher<GraphStoreUpdate, ScryError> {
+    private func doScry(path: ScryPath) -> AnyPublisher<GraphStoreUpdate, ScryError> {
         guard let _ = ship else {
             return Fail(error: .notLoggedIn)
                 .eraseToAnyPublisher()
         }
 
         return airlockConnection
-            .requestScry(app: Constants.graphStoreAppName, path: path)
+            .requestScry(app: Constants.graphStoreAppName, path: path.asPath)
             .mapError { ScryError.fromAFError($0) }
             .eraseToAnyPublisher()
     }
