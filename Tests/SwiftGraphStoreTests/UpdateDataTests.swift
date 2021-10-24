@@ -11,7 +11,16 @@ final class UpdateDataTests: XCTestCase {
     }
     
     func test_addGraph_scryResponseParses() {
-        let _: GraphStoreUpdate = try! JSONLoader.load("add-graph-scry.json")
+        let update: GraphStoreUpdate = try! JSONLoader.load("add-graph-scry.json")
+
+        guard case let .addGraph(_, graphDict, _, _) = update.graphUpdate else {
+            XCTFail("Didn't decode as a .addGraph!")
+            return
+        }
+        
+        let grandchildren = graphDict["100"]?.children?["100"]?.children
+        XCTAssertEqual(grandchildren!.keys.count, 1)
+        XCTAssertEqual(grandchildren!.keys.first, "100")
     }
     
     func test_postParses() {

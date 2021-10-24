@@ -2,11 +2,11 @@
   "graph-update": {
     "add-graph": {
       "graph": {
-        "1634657364": {
+        "1634954167": {
           "post": {
-            "index": "/1634657364",
+            "index": "/1634954167",
             "author": "zod",
-            "time-sent": 1634657364409,
+            "time-sent": 1634954167572,
             "signatures": [],
             "contents": [
               {
@@ -17,11 +17,11 @@
           },
           "children": null
         },
-        "1634836146": {
+        "1634954175": {
           "post": {
-            "index": "/1634836146",
+            "index": "/1634954175",
             "author": "zod",
-            "time-sent": 1634836146443,
+            "time-sent": 1634954175489,
             "signatures": [],
             "contents": [
               {
@@ -32,11 +32,103 @@
           },
           "children": null
         },
-        "1634918501": {
+        "1634954170": {
           "post": {
-            "index": "/1634918501",
+            "index": "/1634954170",
             "author": "zod",
-            "time-sent": 1634918501701,
+            "time-sent": 1634954170486,
+            "signatures": [],
+            "contents": [
+              {
+                "text": "This is test content right here"
+              }
+            ],
+            "hash": null
+          },
+          "children": null
+        },
+        "100": {
+          "post": {
+            "index": "/100",
+            "author": "zod",
+            "time-sent": 1634955736041,
+            "signatures": [],
+            "contents": [
+              {
+                "text": "This is test content right here"
+              }
+            ],
+            "hash": null
+          },
+          "children": {
+            "200": {
+              "post": {
+                "index": "/100/200",
+                "author": "zod",
+                "time-sent": 1634955760371,
+                "signatures": [],
+                "contents": [
+                  {
+                    "text": "This is test content right here"
+                  }
+                ],
+                "hash": null
+              },
+              "children": null
+            },
+            "100": {
+              "post": {
+                "index": "/100/100",
+                "author": "zod",
+                "time-sent": 1634955855179,
+                "signatures": [],
+                "contents": [
+                  {
+                    "text": "This is test content right here"
+                  }
+                ],
+                "hash": null
+              },
+              "children": {
+                "100": {
+                  "post": {
+                    "index": "/100/100/100",
+                    "author": "zod",
+                    "time-sent": 1634956062868,
+                    "signatures": [],
+                    "contents": [
+                      {
+                        "text": "This is test content right here"
+                      }
+                    ],
+                    "hash": null
+                  },
+                  "children": null
+                }
+              }
+            },
+            "300": {
+              "post": {
+                "index": "/100/300",
+                "author": "zod",
+                "time-sent": 1634955902551,
+                "signatures": [],
+                "contents": [
+                  {
+                    "text": "This is test content right here"
+                  }
+                ],
+                "hash": null
+              },
+              "children": null
+            }
+          }
+        },
+        "1634955506": {
+          "post": {
+            "index": "/1634955506",
+            "author": "zod",
+            "time-sent": 1634955506479,
             "signatures": [],
             "contents": [
               {
