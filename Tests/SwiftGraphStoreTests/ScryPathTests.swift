@@ -18,4 +18,12 @@ final class ScryPathTests: XCTestCase {
         let expectedPath = "/graph/~wet/test-resource"
         XCTAssertEqual(testObject.asPath, expectedPath)
     }
+    
+    func test_asPath_rootNodes() throws {
+        let resource = Resource(ship: Ship("nyt"), name: "graph-with-nodes")
+        let testObject = ScryPath.rootNodes(resource: resource)
+        
+        let expectedPath = "/graph/~nyt/graph-with-nodes/subset/lone/~/~"
+        XCTAssertEqual(testObject.asPath, expectedPath)
+    }
 }
