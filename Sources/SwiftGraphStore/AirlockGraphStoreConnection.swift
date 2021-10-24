@@ -9,18 +9,16 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
     private let airlockConnection: AirlockConnection
     public let graphStoreSubscription: AnyPublisher<GraphStoreUpdate, Error>
     
-    public func createPost(contents: [Content]?) -> Post? {
-        createPost(contents: contents, timeSent: Date())
+    public func createPost(index: String, contents: [Content]?) -> Post? {
+        createPost(index: index, contents: contents, timeSent: Date())
     }
 
-    public func createPost(contents: [Content]?, timeSent: Date) -> Post? {
+    public func createPost(index: String, contents: [Content]?, timeSent: Date) -> Post? {
         guard let ship = ship else {
             print("Can't make a post!  Not logged in.")
             return nil
         }
         
-        let index = "/\(Int(timeSent.timeIntervalSince1970))"
-
         return Post(author: ship, index: index, timeSent: timeSent, contents: contents, hash: nil, signatures: [])
     }
     
@@ -80,8 +78,8 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
         return doPoke(update: update, actionMessage: "add a graph")
     }
     
-    public func requestAddNodes(resource: Resource, post: Post) -> AnyPublisher<Never, PokeError> {
-        let index = post.index
+    // TODO: do an error if the post index doesn't agree with the index param
+    public func requestAddNodes(resource: Resource, index: String, post: Post) -> AnyPublisher<Never, PokeError> {
         let updateNodes = [index: Graph(post: post, children: nil)]
         let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
         

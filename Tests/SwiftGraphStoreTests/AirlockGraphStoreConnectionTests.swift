@@ -12,7 +12,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
 
         let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
         
-        XCTAssertNil(testObject.createPost(contents: nil))
+        XCTAssertNil(testObject.createPost(index: "", contents: nil))
     }
     
     func test_createPost_fillsInValues() throws {
@@ -23,11 +23,12 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let ship = Ship.random
         testObject.setShip(ship)
         
+        let index = UUID().uuidString
         let contents = [Content(text: UUID().patUVString),
                         Content(text: UUID().uuidString)]
         let timeSent = Date()
         
-        let post = testObject.createPost(contents: contents, timeSent: timeSent)
+        let post = testObject.createPost(index: index, contents: contents, timeSent: timeSent)
         
         guard let post = post else {
             XCTFail("Nil post!")
@@ -35,7 +36,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         }
         
         XCTAssertEqual(post.author, ship)
-        XCTAssertEqual(post.index, "/\(Int(timeSent.timeIntervalSince1970))")
+        XCTAssertEqual(post.index, index)
         XCTAssertEqual(post.timeSent, timeSent)
         XCTAssertEqual(post.contents, contents)
         XCTAssertNil(post.hash)
@@ -252,7 +253,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
                 
         let post = Post.testInstance
 
-        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(resource: Resource.testInstance, post: post) }
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(resource: Resource.testInstance, index: "", post: post) }
         callRequestAndVerifyResponse(request: request,
                                      failureClosure: { error in
             XCTAssert(error.errorDescription!.starts(with: "Poke failure"))
@@ -269,12 +270,12 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         
         let resource = Resource.testInstance
         let post = Post.testInstance
-        let index = post.index
+        let index = UUID().uuidString
         
         let updateNodes = [index: Graph(post: post, children: nil)]
         let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
 
-        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(resource: resource, post: post) }
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(resource: resource, index: index, post: post) }
         callRequestAndVerifyResponse(request: request,
                                      completionClosure: { _ in
             XCTAssertEqual(fakeAirlockConnection.requestPoke_calledCount, 1)
@@ -300,7 +301,7 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         let expectedError = PokeError.pokeFailure(errorID)
         fakeAirlockConnection.requestPoke_error = expectedError
         
-        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(resource: resource, post: post) }
+        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(resource: resource, index: "", post: post) }
         callRequestAndVerifyResponse(request: request,
                                      failureClosure: { error in
             XCTAssertEqual(error.errorDescription, "Poke failure: \(errorID)")
