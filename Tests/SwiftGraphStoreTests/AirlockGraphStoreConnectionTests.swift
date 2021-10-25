@@ -518,6 +518,89 @@ final class AirlockGraphStoreConnectionTests: XCTestCase {
         })
     }
     
+    func test_requestReadRootNodes_failsIfNoShip() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+        
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+        
+        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadRootNodes(resource: Resource.testInstance) }
+        callRequestAndVerifyResponse(request: request,
+                                     failureClosure: { error in
+            
+            guard case .notLoggedIn = error else {
+                XCTFail("LoginError should have been .invalidHost")
+                return
+            }
+        })
+    }
+    
+    func test_requestReadRootNodes_scriesGraphStore() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+        testObject.setShip(Ship.random)
+
+        let resourceShip = Ship.random
+        let name = UUID().uuidString
+        let resource = Resource(ship: resourceShip, name: name)
+
+        let expectedPath = ScryPath.rootNodes(resource: resource).asPath
+
+        let addGraphUpdate = GraphUpdate.addGraphTestInstance
+        let graphStoreUpdate = GraphStoreUpdate(graphUpdate: addGraphUpdate)
+        fakeAirlockConnection.requestScry_response = graphStoreUpdate
+
+        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadRootNodes(resource: resource) }
+        callRequestAndVerifyResponse(request: request,
+                                     completionClosure: { _ in
+
+            XCTAssertEqual(fakeAirlockConnection.requestScry_calledCount, 1)
+
+            XCTAssertEqual(fakeAirlockConnection.requestScry_paramApp, Constants.graphStoreAppName)
+            XCTAssertEqual(fakeAirlockConnection.requestScry_paramPath,
+                           expectedPath)
+        })
+    }
+
+    func test_requestReadRootNodes_returnsExpectedValue() {
+        let fakeAirlockConnection = FakeAirlockConnection()
+
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+
+        let ship = Ship.random
+        testObject.setShip(ship)
+
+        let graphUpdate = GraphUpdate.addNodesTestInstance
+        let expectedUpdate = GraphStoreUpdate(graphUpdate: graphUpdate)
+
+        fakeAirlockConnection.requestScry_response = expectedUpdate
+
+        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadRootNodes(resource: Resource.testInstance) }
+        callRequestAndVerifyResponse(request: request,
+                                     successClosure: { value in
+          XCTAssertEqual(value, expectedUpdate)
+        })
+    }
+
+    func test_requestReadRootNodes_whenAirlockFails_passesAlongTheConvertedFailure() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+
+        let testObject = AirlockGraphStoreConnection(airlockConnection: fakeAirlockConnection)
+        testObject.setShip(Ship.random)
+
+        let afError = AFError.urlRequestValidationFailed(reason: .bodyDataInGETRequest(Data()))
+        fakeAirlockConnection.requestScry_error = afError
+
+        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadRootNodes(resource: Resource.testInstance) }
+        callRequestAndVerifyResponse(request: request,
+                                     failureClosure: { error in
+            guard case .scryFailed(afError.errorDescription) = error else {
+                XCTFail("Unexpected failure")
+                return
+            }
+        })
+    }
+    
     private func callRequestAndVerifyResponse<T, E: Error>(request: () -> AnyPublisher<T, E>,
                                                  successClosure: ((T) -> Void)? = nil,
                                                  failureClosure: ((E) -> Void)? = nil,

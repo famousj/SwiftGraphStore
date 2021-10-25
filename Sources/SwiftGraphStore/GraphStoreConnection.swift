@@ -19,6 +19,7 @@ public protocol GraphStoreConnection {
 
     func requestReadKeys() -> AnyPublisher<GraphStoreUpdate, ScryError>
     func requestReadGraph(resource: Resource) -> AnyPublisher<GraphStoreUpdate, ScryError>
+    func requestReadRootNodes(resource: Resource) -> AnyPublisher<GraphStoreUpdate, ScryError>
     
     func requestTestScry(resource: Resource, path: Path) -> AnyPublisher<String, ScryError>
 }

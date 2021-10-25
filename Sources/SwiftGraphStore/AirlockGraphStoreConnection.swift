@@ -94,6 +94,10 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
         doScry(path: .keys)
     }
     
+    public func requestReadRootNodes(resource: Resource) -> AnyPublisher<GraphStoreUpdate, ScryError> {
+        doScry(path: .rootNodes(resource: resource))
+    }
+    
     public func requestTestScry(resource: Resource, path: Path) -> AnyPublisher<String, ScryError> {
         guard let _ = ship else {
             return Fail(error: .notLoggedIn)
