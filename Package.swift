@@ -28,6 +28,7 @@ let package = Package(
             dependencies: ["Alamofire", "UrsusHTTP"]),
         .testTarget(
             name: "SwiftGraphStoreTests",
-            dependencies: ["SwiftGraphStore"]),
+            dependencies: ["SwiftGraphStore"],
+            resources: [.process("Resources")]),
     ]
 )
