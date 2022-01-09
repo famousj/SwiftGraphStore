@@ -14,9 +14,6 @@ let package = Package(
         .library(
             name: "SwiftGraphStore",
             targets: ["SwiftGraphStore"]),
-        .library(
-            name: "SwiftGraphStoreTests",
-            targets: ["SwiftGraphStoreTests"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.4.0")),
