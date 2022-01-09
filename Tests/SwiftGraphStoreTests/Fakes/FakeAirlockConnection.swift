@@ -21,7 +21,7 @@ class FakeAirlockConnection: AirlockConnection {
             return Fail(outputType: Ship.self, failure: error)
                 .eraseToAnyPublisher()
         } else {
-            return Just(requestLogin_response!)
+            return Just(requestLogin_response ?? Ship.random)
                 .asAlamofirePublisher()
         }
     }
