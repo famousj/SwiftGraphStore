@@ -4,17 +4,20 @@ import SwiftGraphStore
 import Alamofire
 import UrsusHTTP
 
-class FakeAirlockConnection: AirlockConnection {
-    var graphStoreSubscriptionSubject = PassthroughSubject<Data, SubscribeError>()
-    var graphStoreSubscription: AnyPublisher<Data, SubscribeError> {
+public class FakeAirlockConnection: AirlockConnection {
+    
+    public init() {}
+    
+    public var graphStoreSubscriptionSubject = PassthroughSubject<Data, SubscribeError>()
+    public var graphStoreSubscription: AnyPublisher<Data, SubscribeError> {
         graphStoreSubscriptionSubject
             .eraseToAnyPublisher()
     }
     
-    var requestLogin_calledCount = 0
-    var requestLogin_response: Ship?
-    var requestLogin_error: AFError?
-    func requestLogin() -> AnyPublisher<Ship, AFError> {
+    public var requestLogin_calledCount = 0
+    public var requestLogin_response: Ship?
+    public var requestLogin_error: AFError?
+    public func requestLogin() -> AnyPublisher<Ship, AFError> {
         requestLogin_calledCount += 1
         
         if let error = requestLogin_error {
@@ -26,13 +29,13 @@ class FakeAirlockConnection: AirlockConnection {
         }
     }
     
-    var requestPoke_calledCount = 0
-    var requestPoke_paramShip: Ship?
-    var requestPoke_paramApp: App?
-    var requestPoke_paramMark: Mark?
-    var requestPoke_paramJson: Encodable?
-    var requestPoke_error: PokeError?
-    func requestPoke<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T) -> AnyPublisher<Never, PokeError> {
+    public var requestPoke_calledCount = 0
+    public var requestPoke_paramShip: Ship?
+    public var requestPoke_paramApp: App?
+    public var requestPoke_paramMark: Mark?
+    public var requestPoke_paramJson: Encodable?
+    public var requestPoke_error: PokeError?
+    public func requestPoke<T: Encodable>(ship: Ship, app: App, mark: Mark, json: T) -> AnyPublisher<Never, PokeError> {
         requestPoke_calledCount += 1
         requestPoke_paramShip = ship
         requestPoke_paramApp = app
@@ -48,13 +51,12 @@ class FakeAirlockConnection: AirlockConnection {
         }
     }
     
-    var requestScry_calledCount = 0
-    var requestScry_paramApp: App?
-    var requestScry_paramPath: Path?
-    
-    var requestScry_error: AFError?
-    var requestScry_response: Decodable?
-    func requestScry<T: Decodable>(app: App, path: Path) -> AnyPublisher<T, AFError> {
+    public var requestScry_calledCount = 0
+    public var requestScry_paramApp: App?
+    public var requestScry_paramPath: Path?
+    public var requestScry_error: AFError?
+    public var requestScry_response: Decodable?
+    public func requestScry<T: Decodable>(app: App, path: Path) -> AnyPublisher<T, AFError> {
         requestScry_calledCount += 1
         
         requestScry_paramApp = app
@@ -69,13 +71,12 @@ class FakeAirlockConnection: AirlockConnection {
         }
     }
     
-    var requestStartSubscription_calledCount = 0
-    var requestStartSubscription_paramShip: Ship?
-    var requestStartSubscription_paramApp: App?
-    var requestStartSubscription_paramPath: Path?
-    
-    var requestStartSubscription_error: AFError?
-    func requestStartSubscription(ship: Ship, app: App, path: Path) -> AnyPublisher<Never, AFError> {
+    public var requestStartSubscription_calledCount = 0
+    public var requestStartSubscription_paramShip: Ship?
+    public var requestStartSubscription_paramApp: App?
+    public var requestStartSubscription_paramPath: Path?
+    public var requestStartSubscription_error: AFError?
+    public func requestStartSubscription(ship: Ship, app: App, path: Path) -> AnyPublisher<Never, AFError> {
         requestStartSubscription_calledCount += 1
         
         requestStartSubscription_paramShip = ship
@@ -91,7 +92,7 @@ class FakeAirlockConnection: AirlockConnection {
         }
     }
     
-    func requestTestScry(app: App, path: Path) -> AnyPublisher<String, AFError> {
+    public func requestTestScry(app: App, path: Path) -> AnyPublisher<String, AFError> {
         Fail(error: AFError.responseValidationFailed(reason: .dataFileNil))
             .eraseToAnyPublisher()
     }
