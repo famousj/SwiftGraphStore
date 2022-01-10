@@ -27,10 +27,7 @@ public class AirlockGraphStoreConnection: GraphStoreConnection {
         
         graphStoreSubscription = airlockConnection
             .graphStoreSubscription
-            .tryMap { data -> GraphStoreUpdate in
-                let decoder = JSONDecoder()
-                return try decoder.decode(GraphStoreUpdate.self, from: data)
-            }
+            .decode(type: GraphStoreUpdate.self, decoder: JSONDecoder())
             .eraseToAnyPublisher()
     }
     
