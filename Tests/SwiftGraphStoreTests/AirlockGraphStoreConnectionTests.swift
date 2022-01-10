@@ -8,6 +8,14 @@ import SwiftGraphStoreFakes
 
 final class AirlockGraphStoreConnectionTests: XCTestCase {
     
+    func test_doesNotRetain() {
+        var testObject: AirlockGraphStoreConnection? = AirlockGraphStoreConnection(airlockConnection: FakeAirlockConnection())
+        
+        weak var weakTestObject = testObject
+        testObject = nil
+        XCTAssertNil(weakTestObject)
+    }
+    
     func test_createPost_whenNoShip_returnsNil() throws {
         let fakeAirlockConnection = FakeAirlockConnection()
 
