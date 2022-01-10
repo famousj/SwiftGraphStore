@@ -3,7 +3,9 @@ import Combine
 import Alamofire
 import UrsusHTTP
 
-public class AirlockGraphStoreConnection: GraphStoreConnecting {
+// TODO: Log errors and not-logged-in errors
+// TODO: Rename this
+public class GraphStoreConnection: GraphStoreConnecting {
     public internal(set) var ship: Ship?
     
     private let airlockConnection: AirlockConnection
@@ -13,6 +15,7 @@ public class AirlockGraphStoreConnection: GraphStoreConnecting {
         createPost(index: index, contents: contents, timeSent: Date())
     }
 
+    // TODO: Should we throw here?
     public func createPost(index: String, contents: [Content]?, timeSent: Date) -> Post? {
         guard let ship = ship else {
             print("Can't make a post!  Not logged in.")
@@ -95,6 +98,7 @@ public class AirlockGraphStoreConnection: GraphStoreConnecting {
         doScry(path: .rootNodes(resource: resource))
     }
     
+    // TODO: Delete this at some point
     public func requestTestScry(resource: Resource, path: Path) -> AnyPublisher<String, ScryError> {
         guard let _ = ship else {
             return Fail(error: .notLoggedIn)
