@@ -2,7 +2,7 @@ import Foundation
 import Combine
 import UrsusHTTP
 
-public protocol GraphStoreConnection {
+public protocol GraphStoreConnecting {
     var ship: Ship? { get }
 
     var graphStoreSubscription: AnyPublisher<GraphStoreUpdate, Error> { get }

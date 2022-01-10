@@ -3,7 +3,7 @@ import Combine
 import Alamofire
 import UrsusHTTP
 
-public class AirlockGraphStoreConnection: GraphStoreConnection {
+public class AirlockGraphStoreConnection: GraphStoreConnecting {
     public internal(set) var ship: Ship?
     
     private let airlockConnection: AirlockConnection

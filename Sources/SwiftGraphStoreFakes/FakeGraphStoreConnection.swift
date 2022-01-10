@@ -3,7 +3,7 @@ import Combine
 import SwiftGraphStore
 import UrsusHTTP
 
-public class FakeGraphStoreConnection: GraphStoreConnection {
+public class FakeGraphStoreConnection: GraphStoreConnecting {
     
 
     public init() {}
