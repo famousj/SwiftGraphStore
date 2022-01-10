@@ -4,7 +4,7 @@ import Alamofire
 import UrsusHTTP
 import UrsusAtom
 
-public class UrsusHTTPConnection: AirlockConnecting {
+public class AirlockConnection: AirlockConnecting {
     private var graphStoreSubject = PassthroughSubject<Data, SubscribeError>()
     public var graphStoreSubscription: AnyPublisher<Data, SubscribeError> {
         graphStoreSubject.eraseToAnyPublisher()
