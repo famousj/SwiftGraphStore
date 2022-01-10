@@ -25,7 +25,7 @@ public class FakeAirlockConnection: AirlockConnection {
                 .eraseToAnyPublisher()
         } else {
             return Just(requestLogin_response ?? Ship.random)
-                .asAlamofirePublisher()
+                .withErrorType()
         }
     }
     
@@ -67,7 +67,7 @@ public class FakeAirlockConnection: AirlockConnection {
                 .eraseToAnyPublisher()
         } else {
             return Just(requestScry_response! as! T)
-                .asAlamofirePublisher()
+                .withErrorType()
         }
     }
     
@@ -88,26 +88,11 @@ public class FakeAirlockConnection: AirlockConnection {
                 .eraseToAnyPublisher()
         } else {
             return neverPublisher()
-            
         }
     }
     
     public func requestTestScry(app: App, path: Path) -> AnyPublisher<String, AFError> {
         Fail(error: AFError.responseValidationFailed(reason: .dataFileNil))
-            .eraseToAnyPublisher()
-    }
-    
-    private func neverPublisher<E: Error>() -> AnyPublisher<Never, E> {
-        Just(true)
-            .ignoreOutput()
-            .setFailureType(to: E.self)
-            .eraseToAnyPublisher()
-    }
-}
-
-extension Just {
-    func asAlamofirePublisher<E: Error>() -> AnyPublisher<Output, E> {
-        setFailureType(to: E.self)
             .eraseToAnyPublisher()
     }
 }
