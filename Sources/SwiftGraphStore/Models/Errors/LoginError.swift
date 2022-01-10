@@ -14,7 +14,7 @@ public enum LoginError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .offline:
-            return "You appear to be offline"
+            return "You aren't connected to the internet!"
         case .invalidURL(let url):
             if let url = url {
                 return "Invalid URL: \(url)"
@@ -22,7 +22,7 @@ public enum LoginError: LocalizedError {
                 return "Invalid URL"
             }
         case .httpsRequired:
-            return "You need to use HTTPS to connect to your ship!"
+            return "I can only connect to ships running a secure connection. Please go here to see how to setup HTTPS:\n https://urbit.org/using/os/basics"
         case .invalidHost(let url):
             var error: String
             if let url = url,
@@ -33,11 +33,11 @@ public enum LoginError: LocalizedError {
             }
             return error + " Check your URL and try again."
         case .shipNotRunning:
-            return "Could not connect to the URL.  Make sure your ship is running."
+            return "Could not connect to the URL.  Make sure your ship is running and try again."
         case .badCode:
             return "Your code did not work.  Check your code and URL, and try again"
         case .loginFailed:
-            return "Check your URL and code, and then try again."
+            return "Check your URL and code, make sure your ship is running, and then try again."
         }
     }
     
