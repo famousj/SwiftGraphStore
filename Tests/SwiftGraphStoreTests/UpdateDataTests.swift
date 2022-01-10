@@ -1,6 +1,6 @@
 import XCTest
 import UrsusHTTP
-import SwiftGraphStoreMocks
+import SwiftGraphStoreFakes
 
 @testable import SwiftGraphStore
 

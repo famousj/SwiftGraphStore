@@ -2,7 +2,7 @@ import XCTest
 import Combine
 import Alamofire
 import UrsusHTTP
-import SwiftGraphStoreMocks
+import SwiftGraphStoreFakes
 
 @testable import SwiftGraphStore
 

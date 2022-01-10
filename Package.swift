@@ -15,8 +15,8 @@ let package = Package(
             name: "SwiftGraphStore",
             targets: ["SwiftGraphStore"]),
         .library(
-            name: "SwiftGraphStoreMocks",
-            targets: ["SwiftGraphStoreMocks"]),
+            name: "SwiftGraphStoreFakes",
+            targets: ["SwiftGraphStoreFakes"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.4.0")),
@@ -30,11 +30,11 @@ let package = Package(
             name: "SwiftGraphStore",
             dependencies: ["Alamofire", "UrsusHTTP"]),
         .target(
-            name: "SwiftGraphStoreMocks",
+            name: "SwiftGraphStoreFakes",
             dependencies: ["SwiftGraphStore", "UrsusHTTP"]),
         .testTarget(
             name: "SwiftGraphStoreTests",
-            dependencies: ["SwiftGraphStore", "SwiftGraphStoreMocks"],
+            dependencies: ["SwiftGraphStore", "SwiftGraphStoreFakes"],
             resources: [.process("Resources")]),
     ]
 )
