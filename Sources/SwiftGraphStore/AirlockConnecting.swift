@@ -3,7 +3,7 @@ import Combine
 import Alamofire
 import UrsusHTTP
 
-public protocol AirlockConnection {
+public protocol AirlockConnecting {
     var graphStoreSubscription: AnyPublisher<Data, SubscribeError> { get }
     
     func requestLogin() -> AnyPublisher<Ship, AFError>

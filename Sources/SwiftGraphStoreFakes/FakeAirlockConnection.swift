@@ -4,7 +4,7 @@ import SwiftGraphStore
 import Alamofire
 import UrsusHTTP
 
-public class FakeAirlockConnection: AirlockConnection {
+public class FakeAirlockConnection: AirlockConnecting {
     
     public init() {}
     

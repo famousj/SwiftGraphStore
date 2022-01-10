@@ -8,7 +8,7 @@ import UrsusHTTP
 public class GraphStoreConnection: GraphStoreConnecting {
     public internal(set) var ship: Ship?
     
-    private let airlockConnection: AirlockConnection
+    private let airlockConnection: AirlockConnecting
     public let graphStoreSubscription: AnyPublisher<GraphStoreUpdate, Error>
     
     public func createPost(index: String, contents: [Content]?) -> Post? {
@@ -25,7 +25,7 @@ public class GraphStoreConnection: GraphStoreConnecting {
         return Post(author: ship, index: index, timeSent: timeSent, contents: contents, hash: nil, signatures: [])
     }
     
-    public init(airlockConnection: AirlockConnection) {
+    public init(airlockConnection: AirlockConnecting) {
         self.airlockConnection = airlockConnection
         
         graphStoreSubscription = airlockConnection
