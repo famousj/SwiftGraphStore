@@ -4,7 +4,6 @@ import Alamofire
 import UrsusHTTP
 
 // TODO: Log errors and not-logged-in errors
-// TODO: Rename this
 public class GraphStoreConnection: GraphStoreConnecting {
     public internal(set) var ship: Ship?
     
@@ -15,7 +14,6 @@ public class GraphStoreConnection: GraphStoreConnecting {
         createPost(index: index, contents: contents, timeSent: Date())
     }
 
-    // TODO: Should we throw here?
     public func createPost(index: String, contents: [Content]?, timeSent: Date) -> Post? {
         guard let ship = ship else {
             print("Can't make a post!  Not logged in.")
@@ -34,8 +32,6 @@ public class GraphStoreConnection: GraphStoreConnecting {
             .eraseToAnyPublisher()
     }
     
-    // TODO: Automatically add some kind of http or https when it's missing from the URL
-    // TODO: Automatically upgrade your connection to https when you get this error
     public func requestLogin() -> AnyPublisher<Ship, LoginError> {
         airlockConnection
             .requestLogin()
