@@ -12,10 +12,17 @@ public enum ScryError: LocalizedError {
         case .notLoggedIn:
             return "you aren't logged in!"
         case .resourceNotFound(let url):
-            return "I couldn't find anything at " + (url ? url?.absoluteString : "your URL")
+            return "I couldn't find anything at " + urlString(url)
         case .scryFailed(let message):
             return message
         }
+    }
+    
+    private func urlString(_ url: URL?) -> String {
+        guard let url = url else {
+            return "your URL"
+        }
+        return url.absoluteString
     }
     
     // TODO: Add more expected errors
