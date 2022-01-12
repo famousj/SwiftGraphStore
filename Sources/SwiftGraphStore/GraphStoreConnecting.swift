@@ -11,7 +11,7 @@ public protocol GraphStoreConnecting {
     func createPost(index: String, contents: [Content]?, timeSent: Date) -> Post?
 
     func requestLogin() -> AnyPublisher<Ship, LoginError>
-    func requestConnect() -> AnyPublisher<Never, PokeError>
+    func requestConnect() -> AnyPublisher<Never, ConnectError>
     func requestStartSubscription() -> AnyPublisher<Never, StartSubscriptionError>
     
     func requestAddGraph(resource: Resource) -> AnyPublisher<Never, PokeError>

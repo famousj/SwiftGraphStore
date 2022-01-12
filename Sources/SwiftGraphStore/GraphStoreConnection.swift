@@ -46,14 +46,16 @@ public class GraphStoreConnection: GraphStoreConnecting {
             .eraseToAnyPublisher()
     }
     
-    public func requestConnect() -> AnyPublisher<Never, PokeError> {
+    public func requestConnect() -> AnyPublisher<Never, ConnectError> {
         guard let ship = ship else {
-            return Fail(error: PokeError.pokeFailure("Unable to connect!  Not logged in."))
+            return Fail(error: .notLoggedIn)
                 .eraseToAnyPublisher()
         }
         
         return airlockConnection
             .requestPoke(ship: ship, app: "hood", mark: "helm-hi", json: "airlock connected")
+            .mapError { .fromPokeError($0) }
+            .eraseToAnyPublisher()
     }
     
     public func requestStartSubscription() -> AnyPublisher<Never, StartSubscriptionError> {
@@ -63,7 +65,9 @@ public class GraphStoreConnection: GraphStoreConnecting {
         }
         
         return airlockConnection
-            .requestStartSubscription(ship: ship, app: Constants.graphStoreAppName, path: Constants.graphStoreUpdatePath)
+            .requestStartSubscription(ship: ship,
+                                      app: Constants.graphStoreAppName,
+                                      path: Constants.graphStoreUpdatePath)
             .mapError { .fromAFError($0) }
             .eraseToAnyPublisher()
     }

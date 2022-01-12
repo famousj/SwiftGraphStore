@@ -104,7 +104,10 @@ final class GraphStoreConnectionTests: XCTestCase {
 
         callRequestAndVerifyResponse(request: testObject.requestConnect,
                                      failureClosure: { error in
-            XCTAssert(error.errorDescription!.starts(with: "Poke failure"))
+            guard case .notLoggedIn = error else {
+                XCTFail("Unexpected failure")
+                return
+            }
         })
     }
     

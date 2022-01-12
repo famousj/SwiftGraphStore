@@ -51,8 +51,8 @@ public class FakeGraphStoreConnection: GraphStoreConnecting {
     }
 
     public var requestConnect_calledCount = 0
-    public var requestConnect_error: PokeError?
-    public func requestConnect() -> AnyPublisher<Never, PokeError> {
+    public var requestConnect_error: ConnectError?
+    public func requestConnect() -> AnyPublisher<Never, ConnectError> {
         requestConnect_calledCount += 1
         
         if let error = requestConnect_error {

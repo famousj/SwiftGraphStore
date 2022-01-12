@@ -1,5 +1,6 @@
 import Foundation
 import Alamofire
+import UrsusHTTP
 
 public enum ConnectError: LocalizedError {
     
@@ -15,7 +16,7 @@ public enum ConnectError: LocalizedError {
         }
     }
     
-    static func fromAFError(_ error: AFError) -> ConnectError {
+    static func fromPokeError(_ error: PokeError) -> ConnectError {
         .connectFailed(message: error.localizedDescription)
     }
 }
