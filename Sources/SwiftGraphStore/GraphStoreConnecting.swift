@@ -7,8 +7,8 @@ public protocol GraphStoreConnecting {
 
     var graphStoreSubscription: AnyPublisher<GraphStoreUpdate, Error> { get }
 
-    func createPost(index: String, contents: [Content]?) -> Post?
-    func createPost(index: String, contents: [Content]?, timeSent: Date) -> Post?
+    func createPost(index: String, contents: [Content]) -> Post?
+    func createPost(index: String, contents: [Content], timeSent: Date) -> Post?
 
     func requestLogin() -> AnyPublisher<Ship, LoginError>
     func requestConnect() -> AnyPublisher<Never, ConnectError>

@@ -21,7 +21,7 @@ public class FakeGraphStoreConnection: GraphStoreConnecting {
     public var createPost_paramTimeSent: Date?
     public var createPost_returnPost: Post?
     public func createPost(index: String,
-                           contents: [Content]?,
+                           contents: [Content],
                            timeSent: Date) -> Post? {
         createPost_calledCount += 1
         createPost_paramIndex = index
@@ -31,7 +31,7 @@ public class FakeGraphStoreConnection: GraphStoreConnecting {
         return createPost_returnPost
     }
     
-    public func createPost(index: String, contents: [Content]?) -> Post? {
+    public func createPost(index: String, contents: [Content]) -> Post? {
         createPost(index: index, contents: contents, timeSent: Date())
     }
     

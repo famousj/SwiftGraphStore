@@ -10,11 +10,11 @@ public class GraphStoreConnection: GraphStoreConnecting {
     private let airlockConnection: AirlockConnecting
     public let graphStoreSubscription: AnyPublisher<GraphStoreUpdate, Error>
     
-    public func createPost(index: String, contents: [Content]?) -> Post? {
+    public func createPost(index: String, contents: [Content]) -> Post? {
         createPost(index: index, contents: contents, timeSent: Date())
     }
 
-    public func createPost(index: String, contents: [Content]?, timeSent: Date) -> Post? {
+    public func createPost(index: String, contents: [Content], timeSent: Date) -> Post? {
         guard let ship = ship else {
             print("Can't make a post!  Not logged in.")
             return nil
