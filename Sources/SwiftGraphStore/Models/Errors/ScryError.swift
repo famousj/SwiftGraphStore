@@ -20,7 +20,7 @@ public enum ScryError: LocalizedError {
     
     private func urlString(_ url: URL?) -> String {
         guard let url = url else {
-            return "your URL"
+            return "that URL"
         }
         return url.absoluteString
     }
