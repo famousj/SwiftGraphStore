@@ -21,7 +21,7 @@ final class GraphStoreConnectionTests: XCTestCase {
 
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
         
-        XCTAssertNil(testObject.createPost(index: "", contents: nil))
+        XCTAssertNil(testObject.createPost(index: "", contents: []))
     }
     
     func test_createPost_fillsInValues() throws {

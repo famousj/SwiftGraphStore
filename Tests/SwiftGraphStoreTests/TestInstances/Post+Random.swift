@@ -7,7 +7,7 @@ internal extension Post {
         Post(author: Ship.random,
              index: UUID().patUVString,
              timeSent: Date(),
-             contents: nil,
+             contents: [],
              hash: nil,
              signatures: [])
     }

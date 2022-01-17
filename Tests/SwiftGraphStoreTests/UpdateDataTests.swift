@@ -61,7 +61,7 @@ final class UpdateDataTests: XCTestCase {
         let post = Post(author: resource.ship,
                         index: UUID().uuidString,
                         timeSent: Date(),
-                        contents: nil,
+                        contents: [],
                         hash: nil,
                         signatures: [])
         let graph = Graph(post: post, children: nil)
