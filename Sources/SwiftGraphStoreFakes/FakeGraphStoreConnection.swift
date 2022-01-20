@@ -96,11 +96,13 @@ public class FakeGraphStoreConnection: GraphStoreConnecting {
     
     public var requestAddNodes_calledCount = 0
     public var requestAddNodes_paramResource: Resource?
+    public var requestAddNodes_paramIndex: String?
     public var requestAddNodes_paramPost: Post?
     public var requestAddNodes_error: PokeError?
-    public func requestAddNodes(resource: Resource, post: Post) -> AnyPublisher<Never, PokeError> {
+    public func requestAddNodes(resource: Resource, index: String, post: Post) -> AnyPublisher<Never, PokeError> {
         requestAddNodes_calledCount += 1
         requestAddNodes_paramResource = resource
+        requestAddNodes_paramIndex = index
         requestAddNodes_paramPost = post
         
         if let error = requestAddNodes_error {
