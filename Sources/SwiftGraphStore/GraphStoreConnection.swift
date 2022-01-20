@@ -78,9 +78,8 @@ public class GraphStoreConnection: GraphStoreConnecting {
         return doPoke(update: update, actionMessage: "add a graph")
     }
     
-    // TODO: do an error if the post index doesn't agree with the index param
-    public func requestAddNodes(resource: Resource, index: String, post: Post) -> AnyPublisher<Never, PokeError> {
-        let updateNodes = [index: Graph(post: post, children: nil)]
+    public func requestAddNodes(resource: Resource, post: Post) -> AnyPublisher<Never, PokeError> {
+        let updateNodes = [post.index: Graph(post: post, children: nil)]
         let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
         
         return doPoke(update: update, actionMessage: "add a node")
