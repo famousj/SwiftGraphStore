@@ -45,5 +45,33 @@ class IndexTests: XCTestCase {
         let expectedString = "1.234"
         XCTAssertEqual(testObject.stringWithSeparators, expectedString)
     }
+    
+    func test_encodable() {
+        let expectedJsonString = """
+            {"index":"12345"}
+            """
+        
+        let testObject = Index("12345")!
+        let testStruct = IndexTestStruct(index: testObject)
+        let json = try! JSONEncoder().encode(testStruct)
+        let jsonString = String(data: json, encoding: .utf8)
+        
+        XCTAssertEqual(jsonString, expectedJsonString)
+    }
+    
+    func test_decodable() throws {
+        let jsonString = """
+            {"index":"12345"}
+            """
 
+        let json = jsonString.data(using: .utf8)!
+        let testStruct = try JSONDecoder().decode(IndexTestStruct.self, from: json)
+        
+        let expectedIndex = Index("12345")
+        XCTAssertEqual(testStruct.index, expectedIndex)
+    }
+}
+
+fileprivate struct IndexTestStruct: Codable, Equatable {
+    let index: Index
 }

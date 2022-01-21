@@ -44,6 +44,20 @@ extension Index {
     }
 }
 
+extension Index: Codable {
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let stringValue = try container.decode(String.self)
+        value = Self.valueFromString(string: stringValue) ?? 0
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.string)
+    }
+}
+
 extension Index: Equatable {}
 
 extension Index: Hashable {}
