@@ -74,7 +74,6 @@ public class AirlockConnection: AirlockConnecting {
             .subscribeRequest(ship: ship, app: app, path: path) { event in
                 switch event {
                 case .started:
-                    print("Subscription started")
                     break
                 case .failure(let subscribeError):
                     self.graphStoreSubject.send(completion: .failure(subscribeError))

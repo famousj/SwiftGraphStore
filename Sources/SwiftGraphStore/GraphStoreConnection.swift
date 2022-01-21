@@ -98,7 +98,6 @@ public class GraphStoreConnection: GraphStoreConnecting {
         doScry(path: .rootNodes(resource: resource))
     }
     
-    // TODO: Delete this at some point
     public func requestTestScry(resource: Resource, path: Path) -> AnyPublisher<String, ScryError> {
         guard let _ = ship else {
             return Fail(error: .notLoggedIn)
