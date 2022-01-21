@@ -46,6 +46,15 @@ class IndexTests: XCTestCase {
         XCTAssertEqual(testObject.stringWithSeparators, expectedString)
     }
     
+    func test_init_ignoresFas() throws {
+        let indexString = "/12345"
+
+        let testObject = try XCTUnwrap(Index(indexString))
+        
+        let expectedString = "12345"
+        XCTAssertEqual(testObject.string, expectedString)
+    }
+    
     func test_encodable() throws {
         let expectedJsonString = "\"12345\""
         
@@ -58,6 +67,16 @@ class IndexTests: XCTestCase {
     
     func test_decodable() throws {
         let jsonString = "\"12345\""
+
+        let json = jsonString.data(using: .utf8)!
+        let index = try JSONDecoder().decode(Index.self, from: json)
+        
+        let expectedIndex = Index("12345")
+        XCTAssertEqual(index, expectedIndex)
+    }
+    
+    func test_decode_ignoresFas() throws {
+        let jsonString = "\"/12345\""
 
         let json = jsonString.data(using: .utf8)!
         let index = try JSONDecoder().decode(Index.self, from: json)

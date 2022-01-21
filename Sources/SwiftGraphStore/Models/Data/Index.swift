@@ -32,7 +32,12 @@ extension Index {
     }
     
     private static func valueFromString(string: String) -> UInt64? {
-        let number = formatterWithDotSeparators.number(from: string)
+        var valueString = string
+        if string.starts(with: "/") {
+            let count = string.count
+            valueString = String(string.suffix(count-1))
+        }
+        let number = formatterWithDotSeparators.number(from: valueString)
         return number?.uint64Value
     }
     
