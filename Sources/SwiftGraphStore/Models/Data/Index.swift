@@ -60,7 +60,11 @@ extension Index: Codable {
 
 extension Index: Equatable {}
 
-extension Index: Hashable {}
+extension Index: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(value)
+    }
+}
 
 extension Index: Comparable {
     public static func < (lhs: Index, rhs: Index) -> Bool {
