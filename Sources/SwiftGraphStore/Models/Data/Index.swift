@@ -1,51 +1,54 @@
 import Foundation
+import BigInt
 
 // TODO: allow this index to be based off a @da, instead of a swift `Date`
 public struct Index {
-    let value: UInt64
+    let value: BigUInt
     
-    public init(value: UInt64) {
+    public init(value: BigUInt) {
         self.value = value
+    }
+}
+
+extension Index: RawRepresentable {
+    public var rawValue: String {
+        string
+    }
+    
+    public init?(rawValue: String) {
+        guard let stringValue = Self.valueFromString(string: rawValue) else {
+            return nil
+        }
+        value = stringValue
     }
 }
 
 extension Index {
     public init(date: Date = .now) {
-        self.init(value: UInt64(date.timeIntervalSinceReferenceDate * 1000))
+        self.init(value: BigUInt(date.timeIntervalSinceReferenceDate * 1000))
     }
 }
 
 extension Index {
     public init?(_ string: String) {
-        guard let stringValue = Self.valueFromString(string: string) else {
-            return nil
-        }
-        value = stringValue
+        self.init(rawValue: string)
     }
     
     public var stringWithSeparators: String {
-        Self.formatterWithDotSeparators.string(from: NSNumber(value: value)) ?? ""
+        string.split(every: 3).joined(separator: ".")
     }
     
     public var string: String {
         String(value)
     }
     
-    private static func valueFromString(string: String) -> UInt64? {
-        var valueString = string
+    private static func valueFromString(string: String) -> BigUInt? {
+        var valueString = string.split(separator: ".").joined()
         if string.starts(with: "/") {
             let count = string.count
             valueString = String(string.suffix(count-1))
         }
-        let number = formatterWithDotSeparators.number(from: valueString)
-        return number?.uint64Value
-    }
-    
-    private static var formatterWithDotSeparators: NumberFormatter {
-        let numberFormatter = NumberFormatter()
-        numberFormatter.locale = Locale(identifier: "it_IT")
-        numberFormatter.numberStyle = .decimal
-        return numberFormatter
+        return BigUInt(valueString)
     }
     
     public static func convertStringDictionary<T>(_ dict: [String: T]) throws -> [Index: T] {
@@ -86,7 +89,7 @@ extension Index: Equatable {}
 
 extension Index: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(value)
+        value.hash(into: &hasher)
     }
 }
 
@@ -99,5 +102,17 @@ extension Index: Comparable {
 extension Index: CustomStringConvertible {
     public var description: String {
         String(value)
+    }
+}
+
+fileprivate extension String {
+    func split(every: Int) -> [String] {
+        var result = [String]()
+        for i in stride(from: 0, to: self.count, by: every) {
+            let endIndex = self.index(self.endIndex, offsetBy: -i)
+            let startIndex = self.index(endIndex, offsetBy: -every, limitedBy: self.startIndex) ?? self.startIndex
+            result.insert(String(self[startIndex..<endIndex]), at: 0)
+        }
+        return result
     }
 }

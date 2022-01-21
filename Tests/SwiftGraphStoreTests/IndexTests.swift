@@ -1,4 +1,5 @@
 import XCTest
+import BigInt
 @testable import SwiftGraphStore
 
 class IndexTests: XCTestCase {
@@ -6,21 +7,33 @@ class IndexTests: XCTestCase {
         let milliseconds = Date.now.timeIntervalSinceReferenceDate * 1000
         
         let testObject = Index(date: Date.now)
-        XCTAssertEqual(testObject.value, UInt64(milliseconds))
+        XCTAssertEqual(testObject.value, BigUInt(milliseconds))
+    }
+    
+    func test_init_handlesVeryLargeNumbers() {
+        let testObject = Index("170141184505301775679338763611805088481")
+        XCTAssertEqual(testObject?.string, "170141184505301775679338763611805088481")
     }
     
     func test_string_formatsCorrectly() {
+        let testObject = Index("123456789")!
+        
+        let expectedString = "123456789"
+        XCTAssertEqual(testObject.string, expectedString)
+    }
+    
+    func test_stringWithSeparators_formatsCorrectly() {
         let testObject = Index("123456789")!
         
         let expectedString = "123.456.789"
         XCTAssertEqual(testObject.stringWithSeparators, expectedString)
     }
     
-    func test_stringWithoutSeparators_formatsCorrectly() {
-        let testObject = Index("123456789")!
+    func test_stringWithSeparators_handlesShortNumbers() {
+        let testObject = Index("12")!
         
-        let expectedString = "123456789"
-        XCTAssertEqual(testObject.string, expectedString)
+        let expectedString = "12"
+        XCTAssertEqual(testObject.stringWithSeparators, expectedString)
     }
     
     func test_init_acceptsFormattedString() throws {
@@ -30,12 +43,9 @@ class IndexTests: XCTestCase {
         XCTAssertEqual(testObject.stringWithSeparators, indexString)
     }
     
-    func test_init_truncates() throws {
+    func test_init_whenStringHasInvalidCharacters_returnsNil() throws {
         let indexString = "1.234,56"
-        let testObject = try XCTUnwrap(Index(indexString))
-
-        let expectedString = "1.234"
-        XCTAssertEqual(testObject.stringWithSeparators, expectedString)
+       XCTAssertNil(Index(indexString))
     }
     
     func test_init_usesGroupsOfThree() throws {
@@ -83,5 +93,23 @@ class IndexTests: XCTestCase {
         
         let expectedIndex = Index("12345")
         XCTAssertEqual(index, expectedIndex)
+    }
+    
+    func test_convertStringDictionary_succeeds() throws {
+        let indexString = "1234"
+        let dict = [indexString: 1234]
+        
+        let expectedDict = [Index(indexString)!: 1234]
+        let indexDict = try Index.convertStringDictionary(dict)
+        XCTAssertEqual(indexDict, expectedDict)
+    }
+
+    func test_convertIndexDictionary_succeeds() {
+        let indexString = "1234"
+        let dict = [Index(indexString)!: 1234]
+        
+        let expectedDict = [indexString: 1234]
+        let stringDict = Index.convertIndexDictionary(dict)
+        XCTAssertEqual(stringDict, expectedDict)
     }
 }
