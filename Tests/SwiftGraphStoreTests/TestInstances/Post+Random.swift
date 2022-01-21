@@ -5,7 +5,7 @@ import UrsusHTTP
 internal extension Post {
     static var testInstance: Post {
         Post(author: Ship.random,
-             index: UUID().patUVString,
+             index: Index.testInstance,
              timeSent: Date(),
              contents: [],
              hash: nil,

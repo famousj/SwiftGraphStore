@@ -3,13 +3,13 @@ import UrsusHTTP
 
 public struct Post: Codable, Equatable {
     public let author: Ship
-    public let index: String
+    public let index: Index
     public let timeSent: Date
     public var contents: [Content]
     @NullCodable public var hash: Int?
     public var signatures: [Signature]
     
-    public init(author: Ship, index: String, timeSent: Date, contents: [Content], hash: Int?, signatures: [Signature]) {
+    public init(author: Ship, index: Index, timeSent: Date, contents: [Content], hash: Int?, signatures: [Signature]) {
         self.author = author
         self.index = index
         self.timeSent = timeSent

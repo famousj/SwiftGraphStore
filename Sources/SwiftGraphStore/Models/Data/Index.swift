@@ -47,6 +47,25 @@ extension Index {
         numberFormatter.numberStyle = .decimal
         return numberFormatter
     }
+    
+    public static func convertStringDictionary<T>(_ dict: [String: T]) throws -> [Index: T] {
+        var newDict = [Index: T]()
+        try dict.forEach { (key, value) in
+            guard let indexKey = Index(key) else {
+                throw NSError()
+            }
+            newDict[indexKey] = value
+        }
+        return newDict
+    }
+    
+    public static func convertIndexDictionary<T>(_ dict: [Index: T]) -> [String: T] {
+        var newDict = [String: T]()
+        dict.forEach { (key, value) in
+            newDict[key.string] = value
+        }
+        return newDict
+    }
 }
 
 extension Index: Codable {
