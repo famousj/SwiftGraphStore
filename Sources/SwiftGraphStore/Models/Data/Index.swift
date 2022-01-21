@@ -43,3 +43,19 @@ extension Index {
         return numberFormatter
     }
 }
+
+extension Index: Equatable {}
+
+extension Index: Hashable {}
+
+extension Index: Comparable {
+    static func < (lhs: Index, rhs: Index) -> Bool {
+        lhs.value < rhs.value
+    }
+}
+
+extension Index: CustomStringConvertible {
+    var description: String {
+        String(value)
+    }
+}
