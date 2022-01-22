@@ -3,7 +3,7 @@ import BigInt
 
 // TODO: allow this index to be based off a @da, instead of a swift `Date`
 public struct Index {
-    let values: [BigUInt]
+    public let values: [BigUInt]
 
     public init(value: BigUInt) {
         self.init(values: [value])
