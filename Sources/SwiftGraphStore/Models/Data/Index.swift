@@ -92,19 +92,7 @@ extension Index {
     }
 }
 
-extension Index: Codable {
-    
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let stringValue = try container.decode(String.self)
-        values = Self.valuesFromString(string: stringValue) ?? [0]
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(self.string)
-    }
-}
+extension Index: Codable {}
 
 extension Index: Equatable {}
 
