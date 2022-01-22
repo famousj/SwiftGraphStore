@@ -3,10 +3,14 @@ import BigInt
 
 // TODO: allow this index to be based off a @da, instead of a swift `Date`
 public struct Index {
-    let value: BigUInt
-    
+    let values: [BigUInt]
+
     public init(value: BigUInt) {
-        self.value = value
+        self.init(values: [value])
+    }
+
+    public init(values: [BigUInt]) {
+        self.values = values
     }
 }
 
@@ -16,10 +20,10 @@ extension Index: RawRepresentable {
     }
     
     public init?(rawValue: String) {
-        guard let stringValue = Self.valueFromString(string: rawValue) else {
+        guard let stringValues = Self.valuesFromString(string: rawValue) else {
             return nil
         }
-        value = stringValue
+        values = stringValues
     }
 }
 
@@ -35,20 +39,37 @@ extension Index {
     }
     
     public var stringWithSeparators: String {
-        string.split(every: 3).joined(separator: ".")
+        let strings = values.map { value in
+            String(value)
+                .split(every: 3)
+                .joined(separator: ".")
+        }
+        return makePath(strings)
     }
     
     public var string: String {
-        String(value)
+        let strings = values.map { String($0) }
+        return makePath(strings)
     }
     
-    private static func valueFromString(string: String) -> BigUInt? {
-        var valueString = string.split(separator: ".").joined()
-        if string.starts(with: "/") {
-            let count = string.count
-            valueString = String(string.suffix(count-1))
+    private func makePath(_ strings: [String]) -> String {
+        if strings.count == 1 {
+            return strings.joined()
+        } else {
+            return "/" + strings.joined(separator: "/")
         }
-        return BigUInt(valueString)
+    }
+    
+    private static func valuesFromString(string: String) -> [BigUInt]? {
+        let values = string.split(separator: "/")
+            .map { $0.split(separator: ".").joined() }
+            .map { BigUInt($0) }
+        
+        if values.contains(where: {$0 == nil }) {
+            return nil
+        } else {
+            return values.compactMap { $0 }
+        }
     }
     
     public static func convertStringDictionary<T>(_ dict: [String: T]) throws -> [Index: T] {
@@ -76,7 +97,7 @@ extension Index: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let stringValue = try container.decode(String.self)
-        value = Self.valueFromString(string: stringValue) ?? 0
+        values = Self.valuesFromString(string: stringValue) ?? [0]
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -89,19 +110,27 @@ extension Index: Equatable {}
 
 extension Index: Hashable {
     public func hash(into hasher: inout Hasher) {
-        value.hash(into: &hasher)
+        values.forEach { hasher.combine($0) }
     }
 }
 
 extension Index: Comparable {
     public static func < (lhs: Index, rhs: Index) -> Bool {
-        lhs.value < rhs.value
+        for (lhs, rhs) in zip(lhs.values, rhs.values) {
+            if lhs < rhs {
+                return true
+            } else if rhs < lhs {
+                return false
+            }
+        }
+        
+        return false
     }
 }
 
 extension Index: CustomStringConvertible {
     public var description: String {
-        String(value)
+        string
     }
 }
 
