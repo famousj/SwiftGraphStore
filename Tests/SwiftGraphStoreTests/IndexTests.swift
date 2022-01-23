@@ -93,6 +93,21 @@ class IndexTests: XCTestCase {
         let expectedString = "1.234"
         XCTAssertEqual(testObject.stringWithSeparators, expectedString)
     }
+    
+    func test_path_usesDotSeparators() {
+        let values = [BigUInt("123456789"), BigUInt("987654321")]
+        let testObject = Index(values: values)
+        
+        let expectedString = "/123.456.789/987.654.321"
+        XCTAssertEqual(testObject.path, expectedString)
+    }
+    
+    func test_path_prependsFasWithSingleValue() {
+        let testObject = Index(value: BigUInt("777"))
+        
+        let expectedString = "/777"
+        XCTAssertEqual(testObject.path, expectedString)
+    }
         
     func test_encodable() throws {
         let expectedJsonString = "\"12345\""

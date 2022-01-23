@@ -52,12 +52,20 @@ extension Index {
         return makePath(strings)
     }
     
+    public var path: String {
+        prependFas(stringWithSeparators)
+    }
+    
     private func makePath(_ strings: [String]) -> String {
         if strings.count == 1 {
             return strings.joined()
         } else {
             return "/" + strings.joined(separator: "/")
         }
+    }
+    
+    private func prependFas(_ string: String) -> String {
+        (string.first == "/") ? string : ("/" + string)
     }
     
     private static func valuesFromString(string: String) -> [BigUInt]? {
