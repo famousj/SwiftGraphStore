@@ -17,7 +17,7 @@ enum ScryPath {
         case .rootNodes(let resource):
             return graphPath(resource: resource) + "/subset/lone/~/~"
         case let .node(resource, index):
-            return graphPath(resource: resource) + "/node/index/kith" + index.path
+            return graphPath(resource: resource) + "/node/index/kith" + index.pathWithSeparators
         }
     }
     

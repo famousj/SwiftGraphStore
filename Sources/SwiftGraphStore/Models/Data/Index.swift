@@ -16,7 +16,7 @@ public struct Index {
 
 extension Index: RawRepresentable {
     public var rawValue: String {
-        string
+        path
     }
     
     public init?(rawValue: String) {
@@ -38,34 +38,20 @@ extension Index {
         self.init(rawValue: string)
     }
     
-    public var stringWithSeparators: String {
-        let strings = values.map { value in
-            String(value)
+    public var path: String {
+        makePath(String.init)
+    }
+    
+    public var pathWithSeparators: String {
+        makePath { atom in
+            String(atom)
                 .split(every: 3)
                 .joined(separator: ".")
         }
-        return makePath(strings)
     }
     
-    public var string: String {
-        let strings = values.map { String($0) }
-        return makePath(strings)
-    }
-    
-    public var path: String {
-        prependFas(stringWithSeparators)
-    }
-    
-    private func makePath(_ strings: [String]) -> String {
-        if strings.count == 1 {
-            return strings.joined()
-        } else {
-            return "/" + strings.joined(separator: "/")
-        }
-    }
-    
-    private func prependFas(_ string: String) -> String {
-        (string.first == "/") ? string : ("/" + string)
+    private func makePath(_ stringCreator: (BigUInt) -> String) -> String {
+        "/" + values.map(stringCreator).joined(separator: "/")
     }
     
     private static func valuesFromString(string: String) -> [BigUInt]? {
@@ -94,7 +80,7 @@ extension Index {
     public static func convertIndexDictionary<T>(_ dict: [Index: T]) -> [String: T] {
         var newDict = [String: T]()
         dict.forEach { (key, value) in
-            newDict[key.string] = value
+            newDict[key.path] = value
         }
         return newDict
     }
@@ -126,7 +112,7 @@ extension Index: Comparable {
 
 extension Index: CustomStringConvertible {
     public var description: String {
-        string
+        path
     }
 }
 

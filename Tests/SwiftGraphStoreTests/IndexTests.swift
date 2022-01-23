@@ -12,14 +12,14 @@ class IndexTests: XCTestCase {
     
     func test_init_handlesVeryLargeNumbers() {
         let testObject = Index("170141184505301775679338763611805088481")
-        XCTAssertEqual(testObject?.string, "170141184505301775679338763611805088481")
+        XCTAssertEqual(testObject?.path, "/170141184505301775679338763611805088481")
     }
     
     func test_init_acceptsFormattedString() throws {
         let indexString = "123.456.789"
         let testObject = try XCTUnwrap(Index(indexString))
 
-        XCTAssertEqual(testObject.stringWithSeparators, indexString)
+        XCTAssertEqual(testObject.pathWithSeparators, "/\(indexString)")
     }
     
     func test_init_acceptsPath() throws {
@@ -45,72 +45,68 @@ class IndexTests: XCTestCase {
 
         let testObject = try XCTUnwrap(Index(indexString))
         
-        let expectedString = "12345"
-        XCTAssertEqual(testObject.string, expectedString)
+        XCTAssertEqual(testObject.path, indexString)
+        let expectedValues = [BigUInt(12345)]
+        XCTAssertEqual(testObject.values, expectedValues)
     }
     
-    func test_string_formatsCorrectly() {
+    func test_path_formatsCorrectly() {
         let testObject = Index(value: BigUInt(123456789))
         
-        let expectedString = "123456789"
-        XCTAssertEqual(testObject.string, expectedString)
+        let expectedString = "/123456789"
+        XCTAssertEqual(testObject.path, expectedString)
     }
     
-    func test_string_prependsFas() {
+    func test_path_handlesMultipleValues() {
         let values = [BigUInt(123), BigUInt(456)]
         let testObject = Index(values: values)
         
         let expectedString = "/123/456"
-        XCTAssertEqual(testObject.string, expectedString)
+        XCTAssertEqual(testObject.path, expectedString)
     }
     
-    func test_stringWithSeparators_formatsCorrectly() {
+    func test_pathWithSeparators_formatsCorrectly() {
         let testObject = Index("123456789")!
         
-        let expectedString = "123.456.789"
-        XCTAssertEqual(testObject.stringWithSeparators, expectedString)
+        let expectedString = "/123.456.789"
+        XCTAssertEqual(testObject.pathWithSeparators, expectedString)
     }
     
-    func test_stringWithSeparators_handlesMultipleValues() {
+    func test_pathWithSeparators_handlesMultipleValues() {
         let values = [BigUInt("123456789"), BigUInt("987654321")]
         let testObject = Index(values: values)
         
         let expectedString = "/123.456.789/987.654.321"
-        XCTAssertEqual(testObject.stringWithSeparators, expectedString)
+        XCTAssertEqual(testObject.pathWithSeparators, expectedString)
     }
     
-    func test_stringWithSeparators_handlesShortNumbers() {
+    func test_pathWithSeparators_handlesShortNumbers() {
         let testObject = Index("12")!
         
-        let expectedString = "12"
-        XCTAssertEqual(testObject.stringWithSeparators, expectedString)
+        let expectedString = "/12"
+        XCTAssertEqual(testObject.pathWithSeparators, expectedString)
     }
     
-    func test_stringWithSeparators_usesGroupsOfThree() throws {
+    func test_pathWithSeparators_usesGroupsOfThree() throws {
         let indexString = "1.234"
         let testObject = try XCTUnwrap(Index(indexString))
 
-        let expectedString = "1.234"
-        XCTAssertEqual(testObject.stringWithSeparators, expectedString)
+        let expectedString = "/1.234"
+        XCTAssertEqual(testObject.pathWithSeparators, expectedString)
     }
     
-    func test_path_usesDotSeparators() {
-        let values = [BigUInt("123456789"), BigUInt("987654321")]
+    func test_rawRepresentable_createsPathString() throws {
+        let values = [BigUInt(123), BigUInt(456), BigUInt(789)]
         let testObject = Index(values: values)
         
-        let expectedString = "/123.456.789/987.654.321"
-        XCTAssertEqual(testObject.path, expectedString)
+        let expectedString = "/123/456/789"
+        XCTAssertEqual(testObject.rawValue, expectedString)
     }
     
-    func test_path_prependsFasWithSingleValue() {
-        let testObject = Index(value: BigUInt("777"))
-        
-        let expectedString = "/777"
-        XCTAssertEqual(testObject.path, expectedString)
-    }
-        
     func test_encodable() throws {
-        let expectedJsonString = "\"12345\""
+        let expectedJsonString = """
+        "\\/12345"
+        """
         
         let testObject = Index("12345")!
         let json = try JSONEncoder().encode(testObject)
@@ -120,7 +116,7 @@ class IndexTests: XCTestCase {
     }
     
     func test_decodable() throws {
-        let jsonString = "\"12345\""
+        let jsonString = "\"/12345\""
 
         let json = jsonString.data(using: .utf8)!
         let index = try JSONDecoder().decode(Index.self, from: json)
@@ -149,7 +145,7 @@ class IndexTests: XCTestCase {
     }
 
     func test_convertIndexDictionary_succeeds() {
-        let indexString = "1234"
+        let indexString = "/1234"
         let dict = [Index(indexString)!: 1234]
         
         let expectedDict = [indexString: 1234]
