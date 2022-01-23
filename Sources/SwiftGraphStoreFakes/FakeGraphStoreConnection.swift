@@ -4,7 +4,6 @@ import SwiftGraphStore
 import UrsusHTTP
 
 public class FakeGraphStoreConnection: GraphStoreConnecting {
-    
     public init() {}
     
     public var ship: Ship?
@@ -142,6 +141,25 @@ public class FakeGraphStoreConnection: GraphStoreConnecting {
         }
         else {
             return Just(requestReadGraph_returnUpdate!)
+                .withErrorType()
+        }
+    }
+    
+    public var requestReadNode_calledCount = 0
+    public var requestReadNode_paramResource: Resource?
+    public var requestReadNode_paramIndex: Index?
+    public var requestReadNode_error: ScryError?
+    public var requestReadNode_returnUpdate: GraphStoreUpdate?
+    public func requestReadNode(resource: Resource, index: Index) -> AnyPublisher<GraphStoreUpdate, ScryError> {
+        requestReadNode_calledCount += 1
+        requestReadNode_paramResource = resource
+        requestReadNode_paramIndex = index
+        
+        if let error = requestReadNode_error {
+            return Fail(outputType: GraphStoreUpdate.self, failure: error)
+                .eraseToAnyPublisher()
+        } else {
+            return Just(requestReadNode_returnUpdate!)
                 .withErrorType()
         }
     }

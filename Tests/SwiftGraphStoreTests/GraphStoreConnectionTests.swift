@@ -618,6 +618,38 @@ final class GraphStoreConnectionTests: XCTestCase {
         })
     }
     
+    func test_requestReadNode_scriesGraphStore() throws {
+        let fakeAirlockConnection = FakeAirlockConnection()
+
+        let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
+        testObject.setShip(Ship.random)
+
+        let resourceShip = Ship.random
+        let name = UUID().uuidString
+        let resource = Resource(ship: resourceShip, name: name)
+        
+        let index = Index.testInstance
+
+        let expectedPath = ScryPath
+            .node(resource: resource, index: index)
+            .asPath
+
+        let addGraphUpdate = GraphUpdate.addGraphTestInstance
+        let graphStoreUpdate = GraphStoreUpdate(graphUpdate: addGraphUpdate)
+        fakeAirlockConnection.requestScry_response = graphStoreUpdate
+
+        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadNode(resource: resource, index: index) }
+        callRequestAndVerifyResponse(request: request,
+                                     completionClosure: { _ in
+
+            XCTAssertEqual(fakeAirlockConnection.requestScry_calledCount, 1)
+
+            XCTAssertEqual(fakeAirlockConnection.requestScry_paramApp, Constants.graphStoreAppName)
+            XCTAssertEqual(fakeAirlockConnection.requestScry_paramPath,
+                           expectedPath)
+        })
+    }
+    
     private func callRequestAndVerifyResponse<T, E: Error>(request: () -> AnyPublisher<T, E>,
                                                  successClosure: ((T) -> Void)? = nil,
                                                  failureClosure: ((E) -> Void)? = nil,
