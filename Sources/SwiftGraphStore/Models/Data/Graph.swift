@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Graph: Codable, Equatable {
+public struct Graph {
 
     public let post: Post
     @NullCodable public var children: [Index: Graph]?
@@ -9,7 +9,11 @@ public struct Graph: Codable, Equatable {
         self.post = post
         self.children = children
     }
-    
+}
+
+extension Graph: Equatable {}
+
+extension Graph: Codable {
     enum CodingKeys: String, CodingKey {
         case post, children
     }
