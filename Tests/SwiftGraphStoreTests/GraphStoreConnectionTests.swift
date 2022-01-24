@@ -629,16 +629,19 @@ final class GraphStoreConnectionTests: XCTestCase {
         let resource = Resource(ship: resourceShip, name: name)
         
         let index = Index.testInstance
+        let mode = ScryMode.random
 
         let expectedPath = ScryPath
-            .node(resource: resource, index: index)
+            .node(resource: resource, index: index, mode: mode)
             .asPath
 
         let addGraphUpdate = GraphUpdate.addGraphTestInstance
         let graphStoreUpdate = GraphStoreUpdate(graphUpdate: addGraphUpdate)
         fakeAirlockConnection.requestScry_response = graphStoreUpdate
 
-        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = { testObject.requestReadNode(resource: resource, index: index) }
+        let request: () -> AnyPublisher<GraphStoreUpdate, ScryError> = {
+            testObject.requestReadNode(resource: resource, index: index, mode: mode)
+        }
         callRequestAndVerifyResponse(request: request,
                                      completionClosure: { _ in
 

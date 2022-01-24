@@ -148,12 +148,14 @@ public class FakeGraphStoreConnection: GraphStoreConnecting {
     public var requestReadNode_calledCount = 0
     public var requestReadNode_paramResource: Resource?
     public var requestReadNode_paramIndex: Index?
+    public var requestReadNode_paramMode: ScryMode?
     public var requestReadNode_error: ScryError?
     public var requestReadNode_returnUpdate: GraphStoreUpdate?
-    public func requestReadNode(resource: Resource, index: Index) -> AnyPublisher<GraphStoreUpdate, ScryError> {
+    public func requestReadNode(resource: Resource, index: Index, mode: ScryMode) -> AnyPublisher<GraphStoreUpdate, ScryError> {
         requestReadNode_calledCount += 1
         requestReadNode_paramResource = resource
         requestReadNode_paramIndex = index
+        requestReadNode_paramMode = mode
         
         if let error = requestReadNode_error {
             return Fail(outputType: GraphStoreUpdate.self, failure: error)

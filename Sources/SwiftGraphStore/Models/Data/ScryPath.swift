@@ -5,8 +5,7 @@ enum ScryPath {
     case keys
     case graph(resource: Resource)
     case rootNodes(resource: Resource)
-    // TODO: make an enum for Mode (%kith/%lone)
-    case node(resource: Resource, index: Index)
+    case node(resource: Resource, index: Index, mode: ScryMode)
     
     var asPath: Path {
         switch self {
@@ -16,8 +15,8 @@ enum ScryPath {
             return graphPath(resource: resource)
         case .rootNodes(let resource):
             return graphPath(resource: resource) + "/subset/lone/~/~"
-        case let .node(resource, index):
-            return graphPath(resource: resource) + "/node/index/kith" + index.pathWithSeparators
+        case let .node(resource, index, mode):
+            return graphPath(resource: resource) + "/node/index/" + mode.rawValue + index.pathWithSeparators
         }
     }
     

@@ -89,8 +89,8 @@ public class GraphStoreConnection: GraphStoreConnecting {
         doScry(path: .graph(resource: resource))
     }
     
-    public func requestReadNode(resource: Resource, index: Index) -> AnyPublisher<GraphStoreUpdate, ScryError> {
-        doScry(path: .node(resource: resource, index: index))
+    public func requestReadNode(resource: Resource, index: Index, mode: ScryMode) -> AnyPublisher<GraphStoreUpdate, ScryError> {
+        doScry(path: .node(resource: resource, index: index, mode: mode))
     }
     
     public func requestReadKeys() -> AnyPublisher<GraphStoreUpdate, ScryError> {
