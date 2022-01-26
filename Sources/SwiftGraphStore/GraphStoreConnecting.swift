@@ -16,6 +16,7 @@ public protocol GraphStoreConnecting {
     
     func requestAddGraph(resource: Resource) -> AnyPublisher<Never, PokeError>
     func requestAddNodes(resource: Resource, post: Post) -> AnyPublisher<Never, PokeError>
+    func requestAddNodes(resource: Resource, post: Post, children: [Index: Graph]?) -> AnyPublisher<Never, PokeError>
 
     func requestReadKeys() -> AnyPublisher<GraphStoreUpdate, ScryError>
     func requestReadGraph(resource: Resource) -> AnyPublisher<GraphStoreUpdate, ScryError>
@@ -23,4 +24,12 @@ public protocol GraphStoreConnecting {
     func requestReadRootNodes(resource: Resource) -> AnyPublisher<GraphStoreUpdate, ScryError>
     
     func requestTestScry(resource: Resource, path: Path) -> AnyPublisher<String, ScryError>
+}
+
+extension GraphStoreConnecting {
+    public func requestAddNodes(resource: Resource, post: Post) -> AnyPublisher<Never, PokeError> {
+        return requestAddNodes(resource: resource,
+                               post: post,
+                               children: nil)
+    }
 }

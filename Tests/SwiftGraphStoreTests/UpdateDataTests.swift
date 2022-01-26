@@ -28,6 +28,27 @@ final class UpdateDataTests: XCTestCase {
     func test_postParses() throws {
         let _: Post = try JSONLoader.load("post.json")
     }
+    
+    func test_graphParses() throws {
+        let graph: Graph = try JSONLoader.load("graph.json")
+        
+        XCTAssertNotNil(graph.children)
+    }
+    
+    func test_graphEncodeAndDecode() throws {
+        let grandchildren = [Index.testInstance: Graph(post: Post.testInstance, children: nil)]
+        let children = [Index.testInstance: Graph(post: Post.testInstance, children: grandchildren),
+                        Index.testInstance: Graph(post: Post.testInstance, children: nil)]
+
+        let post = Post.testInstance
+        let testObject = Graph(post: post, children: children)
+        
+        let data = try XCTUnwrap(try? JSONEncoder().encode(testObject))
+
+        
+        let decoded = try JSONDecoder().decode(Graph.self, from: data)
+        XCTAssertEqual(decoded, testObject)
+    }
 
     func test_addNodesParses() throws {
         let _: GraphStoreUpdate = try JSONLoader.load("add-nodes.json")

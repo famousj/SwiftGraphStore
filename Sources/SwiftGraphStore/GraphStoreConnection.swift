@@ -78,10 +78,9 @@ public class GraphStoreConnection: GraphStoreConnecting {
         return doPoke(update: update, actionMessage: "add a graph")
     }
     
-    public func requestAddNodes(resource: Resource, post: Post) -> AnyPublisher<Never, PokeError> {
-        let updateNodes = [post.index: Graph(post: post, children: nil)]
+    public func requestAddNodes(resource: Resource, post: Post, children: [Index : Graph]?) -> AnyPublisher<Never, PokeError> {
+        let updateNodes = [post.index: Graph(post: post, children: children)]
         let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
-        
         return doPoke(update: update, actionMessage: "add a node")
     }
     

@@ -284,13 +284,27 @@ final class GraphStoreConnectionTests: XCTestCase {
         let ship = Ship.random
         testObject.setShip(ship)
         
+        let childIndex = Index.testInstance
+        print(childIndex)
+        let childPost = Post.testInstance
+        let childGraph = Graph(post: childPost, children: nil)
+        let children = [childIndex: childGraph]
+        
         let resource = Resource.testInstance
         let post = Post.testInstance
         
-        let updateNodes = [post.index: Graph(post: post, children: nil)]
-        let update = GraphUpdate.addNodes(resource: resource, nodes: updateNodes)
+        print(post.index)
+        
+        let updateNodes = [post.index: Graph(post: post,
+                                             children: children)]
+        let update = GraphUpdate.addNodes(resource: resource,
+                                          nodes: updateNodes)
 
-        let request: () -> AnyPublisher<Never, PokeError> = { testObject.requestAddNodes(resource: resource, post: post) }
+        let request: () -> AnyPublisher<Never, PokeError> = {
+            testObject.requestAddNodes(resource: resource,
+                                       post: post,
+                                       children: children)
+        }
         callRequestAndVerifyResponse(request: request,
                                      completionClosure: { _ in
             XCTAssertEqual(fakeAirlockConnection.requestPoke_calledCount, 1)
