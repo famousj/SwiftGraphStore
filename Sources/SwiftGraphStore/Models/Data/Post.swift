@@ -23,5 +23,3 @@ public struct Post: Codable, Equatable {
         case timeSent = "time-sent"
     }
 }
-
-public struct Signature: Codable, Equatable { }
