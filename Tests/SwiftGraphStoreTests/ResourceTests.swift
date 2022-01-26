@@ -6,7 +6,7 @@ import UrsusHTTP
 final class ResourceTests: XCTestCase {
     
     func test_id_combinesShipAndName() {
-        let ship = Ship.random
+        let ship = Ship.testInstance
         let name = UUID().uuidString
         let resource = Resource(ship: ship, name: name)
 

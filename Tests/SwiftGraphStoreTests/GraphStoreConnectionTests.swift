@@ -30,7 +30,7 @@ final class GraphStoreConnectionTests: XCTestCase {
 
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
         
-        let ship = Ship.random
+        let ship = Ship.testInstance
         testObject.setShip(ship)
         
         let index = Index.testInstance
@@ -117,7 +117,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        let ship = Ship.random
+        let ship = Ship.testInstance
         testObject.setShip(ship)
         
         callRequestAndVerifyResponse(request: testObject.requestConnect,
@@ -136,7 +136,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        let ship = Ship.random
+        let ship = Ship.testInstance
         testObject.setShip(ship)
 
         let errorID = UUID().uuidString
@@ -168,7 +168,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        let ship = Ship.random
+        let ship = Ship.testInstance
         testObject.setShip(ship)
 
         callRequestAndVerifyResponse(request: testObject.requestStartSubscription,
@@ -187,7 +187,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
         
-        let ship = Ship.random
+        let ship = Ship.testInstance
         testObject.setShip(ship)
 
         let afError = AFError.urlRequestValidationFailed(reason: .bodyDataInGETRequest(Data()))
@@ -218,7 +218,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        let ship = Ship.random
+        let ship = Ship.testInstance
         testObject.setShip(ship)
 
         let resource = Resource.testInstance
@@ -245,7 +245,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        let ship = Ship.random
+        let ship = Ship.testInstance
         testObject.setShip(ship)
 
         let errorID = UUID().uuidString
@@ -281,16 +281,12 @@ final class GraphStoreConnectionTests: XCTestCase {
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        let ship = Ship.random
+        let ship = Ship.testInstance
         testObject.setShip(ship)
-        
-        let childIndex = Index.testInstance
-        let childPost = Post.testInstance
-        let childGraph = Node(post: childPost, children: nil)
-        let children = [childIndex: childGraph]
-        
+                
         let resource = Resource.testInstance
         let post = Post.testInstance
+        let children = Graph.testInstance
         
         let updateNodes = [post.index: Node(post: post,
                                             children: children)]
@@ -318,7 +314,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        testObject.setShip(Ship.random)
+        testObject.setShip(Ship.testInstance)
 
         let resource = Resource.testInstance
         let post = Post.testInstance
@@ -341,7 +337,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        let ship = Ship.random
+        let ship = Ship.testInstance
         testObject.setShip(ship)
 
         let graphUpdate = GraphUpdate.addGraphTestInstance
@@ -416,9 +412,9 @@ final class GraphStoreConnectionTests: XCTestCase {
         let fakeAirlockConnection = FakeAirlockConnection()
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
-        testObject.setShip(Ship.random)
+        testObject.setShip(Ship.testInstance)
         
-        let resourceShip = Ship.random
+        let resourceShip = Ship.testInstance
         let name = UUID().uuidString
         let resource = Resource(ship: resourceShip, name: name)
         
@@ -445,7 +441,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        let ship = Ship.random
+        let ship = Ship.testInstance
         testObject.setShip(ship)
         
         let graphUpdate = GraphUpdate.addGraphTestInstance
@@ -464,7 +460,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         let fakeAirlockConnection = FakeAirlockConnection()
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
-        testObject.setShip(Ship.random)
+        testObject.setShip(Ship.testInstance)
 
         let afError = AFError.urlRequestValidationFailed(reason: .bodyDataInGETRequest(Data()))
         fakeAirlockConnection.requestScry_error = afError
@@ -497,7 +493,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         let fakeAirlockConnection = FakeAirlockConnection()
 
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
-        testObject.setShip(Ship.random)
+        testObject.setShip(Ship.testInstance)
 
         let expectedPath = "/keys"
 
@@ -518,7 +514,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         let fakeAirlockConnection = FakeAirlockConnection()
         
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
-        testObject.setShip(Ship.random)
+        testObject.setShip(Ship.testInstance)
         
         let expectedUpdate = GraphStoreUpdate(graphUpdate: GraphUpdate.keysTestInstance)
         fakeAirlockConnection.requestScry_response = expectedUpdate
@@ -533,7 +529,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         let fakeAirlockConnection = FakeAirlockConnection()
 
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
-        testObject.setShip(Ship.random)
+        testObject.setShip(Ship.testInstance)
 
         fakeAirlockConnection.requestScry_error = AFError.responseValidationFailed(reason: .dataFileNil)
 
@@ -566,9 +562,9 @@ final class GraphStoreConnectionTests: XCTestCase {
         let fakeAirlockConnection = FakeAirlockConnection()
 
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
-        testObject.setShip(Ship.random)
+        testObject.setShip(Ship.testInstance)
 
-        let resourceShip = Ship.random
+        let resourceShip = Ship.testInstance
         let name = UUID().uuidString
         let resource = Resource(ship: resourceShip, name: name)
 
@@ -595,7 +591,7 @@ final class GraphStoreConnectionTests: XCTestCase {
 
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
 
-        let ship = Ship.random
+        let ship = Ship.testInstance
         testObject.setShip(ship)
 
         let graphUpdate = GraphUpdate.addNodesTestInstance
@@ -614,7 +610,7 @@ final class GraphStoreConnectionTests: XCTestCase {
         let fakeAirlockConnection = FakeAirlockConnection()
 
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
-        testObject.setShip(Ship.random)
+        testObject.setShip(Ship.testInstance)
 
         let afError = AFError.urlRequestValidationFailed(reason: .bodyDataInGETRequest(Data()))
         fakeAirlockConnection.requestScry_error = afError
@@ -633,9 +629,9 @@ final class GraphStoreConnectionTests: XCTestCase {
         let fakeAirlockConnection = FakeAirlockConnection()
 
         let testObject = GraphStoreConnection(airlockConnection: fakeAirlockConnection)
-        testObject.setShip(Ship.random)
+        testObject.setShip(Ship.testInstance)
 
-        let resourceShip = Ship.random
+        let resourceShip = Ship.testInstance
         let name = UUID().uuidString
         let resource = Resource(ship: resourceShip, name: name)
         

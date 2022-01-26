@@ -44,7 +44,7 @@ public class FakeGraphStoreConnection: GraphStoreConnecting {
             return Fail(outputType: Ship.self, failure: error)
                 .eraseToAnyPublisher()
         } else {
-            return Just(requestLogin_response ?? Ship.random)
+            return Just(requestLogin_response ?? Ship.testInstance)
                 .withErrorType()
         }
     }
@@ -96,11 +96,11 @@ public class FakeGraphStoreConnection: GraphStoreConnecting {
     public var requestAddNodes_calledCount = 0
     public var requestAddNodes_paramResource: Resource?
     public var requestAddNodes_paramPost: Post?
-    public var requestAddNodes_paramChildren: [Index: Node]?
+    public var requestAddNodes_paramChildren: Graph?
     public var requestAddNodes_error: PokeError?
     public func requestAddNodes(resource: Resource,
                                 post: Post,
-                                children: [Index : Node]?) -> AnyPublisher<Never, PokeError> {
+                                children: Graph?) -> AnyPublisher<Never, PokeError> {
         requestAddNodes_calledCount += 1
         requestAddNodes_paramResource = resource
         requestAddNodes_paramPost = post

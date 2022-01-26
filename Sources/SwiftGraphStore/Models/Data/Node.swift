@@ -3,9 +3,9 @@ import Foundation
 public struct Node {
 
     public let post: Post
-    @NullCodable public var children: [Index: Node]?
+    @NullCodable public var children: Graph?
     
-    public init(post: Post, children: [Index: Node]?) {
+    public init(post: Post, children: Graph?) {
         self.post = post
         self.children = children
     }
@@ -25,7 +25,7 @@ extension Node: Codable {
         
         var childrenDict: [String: Node]?
         if let children = children {
-            childrenDict = Index.convertIndexDictionary(children)
+            childrenDict = Graph.convertGraphDictionary(children)
         }
         try container.encode(childrenDict, forKey: .children)
     }
@@ -34,10 +34,10 @@ extension Node: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let post = try container.decode(Post.self, forKey: .post)
-        var children: [Index: Node]?
+        var children: Graph?
         do {
             if let childrenDict = try container.decode([String: Node]?.self, forKey: .children) {
-                children = try Index.convertStringDictionary(childrenDict)
+                children = try Graph.convertStringDictionary(childrenDict)
             }
             
         } catch {

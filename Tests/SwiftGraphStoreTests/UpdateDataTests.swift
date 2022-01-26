@@ -19,10 +19,10 @@ final class UpdateDataTests: XCTestCase {
             return
         }
         
-        let index = Index("100")!
-        let grandchildren = try XCTUnwrap(graphDict[index]?.children?[index]?.children)
+        let atom = Atom(100)
+        let grandchildren = try XCTUnwrap(graphDict[atom]?.children?[atom]?.children)
         XCTAssertEqual(grandchildren.keys.count, 1)
-        XCTAssertEqual(grandchildren.keys.first, index)
+        XCTAssertEqual(grandchildren.keys.first, atom)
     }
     
     func test_postParses() throws {
@@ -30,15 +30,15 @@ final class UpdateDataTests: XCTestCase {
     }
     
     func test_nodeParses() throws {
-        let node: Node = try JSONLoader.load("graph.json")
+        let node: Node = try JSONLoader.load("node.json")
         
         XCTAssertNotNil(node.children)
     }
     
     func test_graphEncodeAndDecode() throws {
-        let grandchildren = [Index.testInstance: Node(post: Post.testInstance, children: nil)]
-        let children = [Index.testInstance: Node(post: Post.testInstance, children: grandchildren),
-                        Index.testInstance: Node(post: Post.testInstance, children: nil)]
+        let grandchildren = Graph.testInstance
+        let children = [Atom.testInstance: Node(post: Post.testInstance, children: grandchildren),
+                        Atom.testInstance: Node(post: Post.testInstance, children: nil)]
 
         let post = Post.testInstance
         let testObject = Node(post: post, children: children)
@@ -59,11 +59,10 @@ final class UpdateDataTests: XCTestCase {
     }
 
     func test_addGraphEncodeAndDecode() throws {
-        let resource = Resource(ship: Ship.random, name: UUID().uuidString)
-        let graph = Node.testInstance
-        let index = graph.post.index
+        let resource = Resource(ship: Ship.testInstance, name: UUID().uuidString)
+        let graph = Graph.testInstance
         let testObject = GraphUpdate.addGraph(resource: resource,
-                                              graph: [index:graph],
+                                              graph: graph,
                                               mark: nil,
                                               overwrite: Bool.random())
         let encoder = JSONEncoder()
@@ -78,10 +77,9 @@ final class UpdateDataTests: XCTestCase {
     }
         
     func test_addNodesEncodeAndDecode() throws {
-        let children = [Index.testInstance: Node(post: Post.testInstance, children: nil),
-                        Index.testInstance: Node(post: Post.testInstance, children: nil)]
+        let children = Graph.testInstance
 
-        let resource = Resource(ship: Ship.random, name: UUID().uuidString)
+        let resource = Resource(ship: Ship.testInstance, name: UUID().uuidString)
         let index = Index.testInstance
         let post = Post.testInstance
         let graph = Node(post: post, children: children)

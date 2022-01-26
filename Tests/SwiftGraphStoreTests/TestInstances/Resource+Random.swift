@@ -4,6 +4,6 @@ import UrsusHTTP
 
 internal extension Resource {
     static var testInstance: Resource {
-        Resource(ship: Ship.random, name: UUID().uuidString)
+        Resource(ship: Ship.testInstance, name: UUID().uuidString)
     }
 }

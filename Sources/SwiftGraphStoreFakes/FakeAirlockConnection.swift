@@ -24,7 +24,7 @@ public class FakeAirlockConnection: AirlockConnecting {
             return Fail(outputType: Ship.self, failure: error)
                 .eraseToAnyPublisher()
         } else {
-            return Just(requestLogin_response ?? Ship.random)
+            return Just(requestLogin_response ?? Ship.testInstance)
                 .withErrorType()
         }
     }

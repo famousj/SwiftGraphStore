@@ -4,7 +4,7 @@ import UrsusHTTP
 
 extension Post {
     public static var testInstance: Post {
-        Post(author: Ship.random,
+        Post(author: Ship.testInstance,
              index: Index.testInstance,
              timeSent: Date(),
              contents: [],

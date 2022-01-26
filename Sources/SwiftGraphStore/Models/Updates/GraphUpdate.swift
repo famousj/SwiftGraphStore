@@ -4,7 +4,7 @@ import UrsusHTTP
 public enum GraphUpdate: Codable, Equatable {
     
     case addGraph(resource: Resource,
-                  graph: [Index: Node],
+                  graph: Graph,
                   mark: Mark?,
                   overwrite: Bool)
     case addNodes(resource: Resource,
@@ -33,7 +33,7 @@ public enum GraphUpdate: Codable, Equatable {
         case let .addGraph(resource, graph, mark, overwrite):
             var addGraphContainer = container.nestedContainer(keyedBy: AddGraphCodingKeys.self, forKey: .addGraph)
             try addGraphContainer.encode(resource, forKey: .resource)
-            let graphDict = Index.convertIndexDictionary(graph)
+            let graphDict = Graph.convertGraphDictionary(graph)
             try addGraphContainer.encode(graphDict, forKey: .graph)
             switch mark {
             case .some(let value):
@@ -62,10 +62,10 @@ public enum GraphUpdate: Codable, Equatable {
         if let addGraphContainer = try? container.nestedContainer(keyedBy: AddGraphCodingKeys.self, forKey: .addGraph) {
             let resource = try addGraphContainer.decode(Resource.self, forKey: .resource)
    
-            let graph: [Index: Node]
+            let graph: Graph
             do {
                 let graphDict = try addGraphContainer.decode([String: Node].self, forKey: .graph)
-                graph = try Index.convertStringDictionary(graphDict)
+                graph = try Graph.convertStringDictionary(graphDict)
             } catch {
                 throw DecodingError.dataCorruptedError(Index.self,
                                                        at: [AddGraphCodingKeys.graph],

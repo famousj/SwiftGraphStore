@@ -5,10 +5,9 @@ import UrsusHTTP
 internal extension GraphUpdate {
     static var addGraphTestInstance: GraphUpdate {
         let resource = Resource.testInstance
-        let node = Node.testInstance
-        let index = node.post.index
+        let graph = Graph.testInstance
         return .addGraph(resource: resource,
-                         graph: [index: node],
+                         graph: graph,
                          mark: nil,
                          overwrite: true)
     }
