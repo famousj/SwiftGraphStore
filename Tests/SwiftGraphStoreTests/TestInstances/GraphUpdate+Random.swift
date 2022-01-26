@@ -16,7 +16,7 @@ internal extension GraphUpdate {
     static var addNodesTestInstance: GraphUpdate {
         let resource = Resource.testInstance
         let node = Node.testInstance
-        let index = graph.post.index
+        let index = node.post.index
         return .addNodes(resource: resource, nodes: [index: node])
     }
     
