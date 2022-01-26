@@ -5,7 +5,7 @@ import BigInt
 extension Ship {
     public static var random: Ship {
         let randomAtom = UInt.random(in: 0...0xFFFFFFFF)
-        let bigUInt = BigUInt(String(randomAtom))!
-        return Ship(atom: bigUInt)
+        let atom = Atom(String(randomAtom))!
+        return Ship(atom: atom)
     }
 }

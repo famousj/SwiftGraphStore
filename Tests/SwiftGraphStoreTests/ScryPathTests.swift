@@ -29,7 +29,7 @@ final class ScryPathTests: XCTestCase {
     
     func test_asPath_node_singleIndex() throws {
         let resource = Resource(ship: Ship("nyt"), name: "graph-with-nodes")
-        let index = Index(value: BigUInt(1234))
+        let index = Index(atoms: [Atom(1234)])
         let mode = ScryMode.includeDescendants
         let testObject = ScryPath.node(resource: resource,
                                        index: index,
@@ -41,7 +41,7 @@ final class ScryPathTests: XCTestCase {
     
     func test_asPath_node_multipleIndices() throws {
         let resource = Resource(ship: Ship("nyt"), name: "graph-with-nodes")
-        let index = Index(values: [BigUInt(1), BigUInt(123456)])
+        let index = Index(atoms: [Atom(1), Atom(123456)])
         let mode = ScryMode.excludeDescendants
         let testObject = ScryPath.node(resource: resource,
                                        index: index,

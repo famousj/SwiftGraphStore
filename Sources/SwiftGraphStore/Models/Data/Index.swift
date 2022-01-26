@@ -3,14 +3,10 @@ import BigInt
 
 // TODO: allow this index to be based off a @da, instead of a swift `Date`
 public struct Index {
-    public let values: [BigUInt]
+    public let atoms: [Atom]
 
-    public init(value: BigUInt) {
-        self.init(values: [value])
-    }
-
-    public init(values: [BigUInt]) {
-        self.values = values
+    public init(atoms: [Atom]) {
+        self.atoms = atoms
     }
 }
 
@@ -20,16 +16,16 @@ extension Index: RawRepresentable {
     }
     
     public init?(rawValue: String) {
-        guard let stringValues = Self.valuesFromString(string: rawValue) else {
+        guard let stringValues = Self.atomsFromString(rawValue) else {
             return nil
         }
-        values = stringValues
+        atoms = stringValues
     }
 }
 
 extension Index {
     public init(date: Date = .now) {
-        self.init(value: BigUInt(date.timeIntervalSinceReferenceDate * 1000))
+        self.init(atoms: [Atom(date.timeIntervalSinceReferenceDate * 1000)])
     }
 }
 
@@ -50,14 +46,14 @@ extension Index {
         }
     }
     
-    private func makePath(_ stringCreator: (BigUInt) -> String) -> String {
-        "/" + values.map(stringCreator).joined(separator: "/")
+    private func makePath(_ stringCreator: (Atom) -> String) -> String {
+        "/" + atoms.map(stringCreator).joined(separator: "/")
     }
     
-    private static func valuesFromString(string: String) -> [BigUInt]? {
+    private static func atomsFromString(_ string: String) -> [Atom]? {
         let values = string.split(separator: "/")
             .map { $0.split(separator: ".").joined() }
-            .map { BigUInt($0) }
+            .map { Atom($0) }
         
         if values.contains(where: {$0 == nil }) {
             return nil
@@ -92,13 +88,13 @@ extension Index: Equatable {}
 
 extension Index: Hashable {
     public func hash(into hasher: inout Hasher) {
-        values.forEach { hasher.combine($0) }
+        atoms.forEach { hasher.combine($0) }
     }
 }
 
 extension Index: Comparable {
     public static func < (lhs: Index, rhs: Index) -> Bool {
-        for (lhs, rhs) in zip(lhs.values, rhs.values) {
+        for (lhs, rhs) in zip(lhs.atoms, rhs.atoms) {
             if lhs < rhs {
                 return true
             } else if rhs < lhs {

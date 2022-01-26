@@ -7,7 +7,7 @@ class IndexTests: XCTestCase {
         let milliseconds = Date.now.timeIntervalSinceReferenceDate * 1000
         
         let testObject = Index(date: Date.now)
-        XCTAssertEqual(testObject.values, [BigUInt(milliseconds)])
+        XCTAssertEqual(testObject.atoms, [Atom(milliseconds)])
     }
     
     func test_init_handlesVeryLargeNumbers() {
@@ -26,8 +26,8 @@ class IndexTests: XCTestCase {
         let indexString = "/123/456/789"
         let testObject = try XCTUnwrap(Index(indexString))
         
-        let expectedValues = [BigUInt(123), BigUInt(456), BigUInt(789)]
-        XCTAssertEqual(testObject.values, expectedValues)
+        let expectedValues = [Atom(123), Atom(456), Atom(789)]
+        XCTAssertEqual(testObject.atoms, expectedValues)
     }
     
     func test_init_whenStringHasInvalidCharacters_returnsNil() throws {
@@ -46,20 +46,20 @@ class IndexTests: XCTestCase {
         let testObject = try XCTUnwrap(Index(indexString))
         
         XCTAssertEqual(testObject.path, indexString)
-        let expectedValues = [BigUInt(12345)]
-        XCTAssertEqual(testObject.values, expectedValues)
+        let expectedValues = [Atom(12345)]
+        XCTAssertEqual(testObject.atoms, expectedValues)
     }
     
     func test_path_formatsCorrectly() {
-        let testObject = Index(value: BigUInt(123456789))
+        let testObject = Index(atoms: [Atom(123456789)])
         
         let expectedString = "/123456789"
         XCTAssertEqual(testObject.path, expectedString)
     }
     
     func test_path_handlesMultipleValues() {
-        let values = [BigUInt(123), BigUInt(456)]
-        let testObject = Index(values: values)
+        let atoms = [Atom(123), Atom(456)]
+        let testObject = Index(atoms: atoms)
         
         let expectedString = "/123/456"
         XCTAssertEqual(testObject.path, expectedString)
@@ -73,8 +73,8 @@ class IndexTests: XCTestCase {
     }
     
     func test_pathWithSeparators_handlesMultipleValues() {
-        let values = [BigUInt("123456789"), BigUInt("987654321")]
-        let testObject = Index(values: values)
+        let atoms = [Atom("123456789"), Atom("987654321")]
+        let testObject = Index(atoms: atoms)
         
         let expectedString = "/123.456.789/987.654.321"
         XCTAssertEqual(testObject.pathWithSeparators, expectedString)
@@ -96,8 +96,8 @@ class IndexTests: XCTestCase {
     }
     
     func test_rawRepresentable_createsPathString() throws {
-        let values = [BigUInt(123), BigUInt(456), BigUInt(789)]
-        let testObject = Index(values: values)
+        let atoms = [Atom(123), Atom(456), Atom(789)]
+        let testObject = Index(atoms: atoms)
         
         let expectedString = "/123/456/789"
         XCTAssertEqual(testObject.rawValue, expectedString)
@@ -154,31 +154,31 @@ class IndexTests: XCTestCase {
     }
     
     func test_lessThan_whenLessThan_returnsFalse() {
-        let lhsValues = [BigUInt(1), BigUInt(2), BigUInt(3)]
-        let rhsValues = [BigUInt(1), BigUInt(3), BigUInt(3)]
+        let lhsValues = [Atom(1), Atom(2), Atom(3)]
+        let rhsValues = [Atom(1), Atom(3), Atom(3)]
         
-        let lhs = Index(values: lhsValues)
-        let rhs = Index(values: rhsValues)
+        let lhs = Index(atoms: lhsValues)
+        let rhs = Index(atoms: rhsValues)
 
         XCTAssertEqual(lhs < rhs, true)
     }
     
     func test_lessThan_whenEqual_returnsFalse() {
-        let lhsValues = [BigUInt(1), BigUInt(2), BigUInt(3)]
-        let rhsValues = [BigUInt(1), BigUInt(2), BigUInt(3)]
+        let lhsValues = [Atom(1), Atom(2), Atom(3)]
+        let rhsValues = [Atom(1), Atom(2), Atom(3)]
         
-        let lhs = Index(values: lhsValues)
-        let rhs = Index(values: rhsValues)
+        let lhs = Index(atoms: lhsValues)
+        let rhs = Index(atoms: rhsValues)
 
         XCTAssertEqual(lhs < rhs, false)
     }
     
     func test_lessThan_whenGreaterThan_returnsFalse() {
-        let lhsValues = [BigUInt(1), BigUInt(2), BigUInt(6)]
-        let rhsValues = [BigUInt(1), BigUInt(2), BigUInt(3)]
+        let lhsValues = [Atom(1), Atom(2), Atom(6)]
+        let rhsValues = [Atom(1), Atom(2), Atom(3)]
         
-        let lhs = Index(values: lhsValues)
-        let rhs = Index(values: rhsValues)
+        let lhs = Index(atoms: lhsValues)
+        let rhs = Index(atoms: rhsValues)
 
         XCTAssertEqual(lhs < rhs, false)
     }
