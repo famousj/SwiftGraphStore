@@ -4,11 +4,11 @@ import UrsusHTTP
 public enum GraphUpdate: Codable, Equatable {
     
     case addGraph(resource: Resource,
-                  graph: [Index: Graph],
+                  graph: [Index: Node],
                   mark: Mark?,
                   overwrite: Bool)
     case addNodes(resource: Resource,
-                  nodes: [Index: Graph])
+                  nodes: [Index: Node])
     case keys(Keys)
     
     enum CodingKeys: String, CodingKey {
@@ -62,9 +62,9 @@ public enum GraphUpdate: Codable, Equatable {
         if let addGraphContainer = try? container.nestedContainer(keyedBy: AddGraphCodingKeys.self, forKey: .addGraph) {
             let resource = try addGraphContainer.decode(Resource.self, forKey: .resource)
    
-            let graph: [Index: Graph]
+            let graph: [Index: Node]
             do {
-                let graphDict = try addGraphContainer.decode([String: Graph].self, forKey: .graph)
+                let graphDict = try addGraphContainer.decode([String: Node].self, forKey: .graph)
                 graph = try Index.convertStringDictionary(graphDict)
             } catch {
                 throw DecodingError.dataCorruptedError(Index.self,
@@ -83,9 +83,9 @@ public enum GraphUpdate: Codable, Equatable {
         
         let addNodesContainer = try container.nestedContainer(keyedBy: AddNodesCodingKeys.self, forKey: .addNodes)
         let resource = try addNodesContainer.decode(Resource.self, forKey: .resource)
-        let nodes: [Index: Graph]
+        let nodes: [Index: Node]
         do {
-            let nodesDict = try addNodesContainer.decode([String: Graph].self, forKey: .nodes)
+            let nodesDict = try addNodesContainer.decode([String: Node].self, forKey: .nodes)
             nodes = try Index.convertStringDictionary(nodesDict)
         } catch {
             throw DecodingError.dataCorruptedError(Index.self,

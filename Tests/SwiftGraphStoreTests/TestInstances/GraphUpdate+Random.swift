@@ -5,19 +5,19 @@ import UrsusHTTP
 internal extension GraphUpdate {
     static var addGraphTestInstance: GraphUpdate {
         let resource = Resource.testInstance
-        let graph = Graph.testInstance
-        let index = graph.post.index
+        let node = Node.testInstance
+        let index = node.post.index
         return .addGraph(resource: resource,
-                         graph: [index: graph],
+                         graph: [index: node],
                          mark: nil,
                          overwrite: true)
     }
     
     static var addNodesTestInstance: GraphUpdate {
         let resource = Resource.testInstance
-        let graph = Graph.testInstance
+        let node = Node.testInstance
         let index = graph.post.index
-        return .addNodes(resource: resource, nodes: [index: graph])
+        return .addNodes(resource: resource, nodes: [index: node])
     }
     
     static var keysTestInstance: GraphUpdate {

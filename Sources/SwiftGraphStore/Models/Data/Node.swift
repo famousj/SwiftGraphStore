@@ -1,19 +1,19 @@
 import Foundation
 
-public struct Graph {
+public struct Node {
 
     public let post: Post
-    @NullCodable public var children: [Index: Graph]?
+    @NullCodable public var children: [Index: Node]?
     
-    public init(post: Post, children: [Index: Graph]?) {
+    public init(post: Post, children: [Index: Node]?) {
         self.post = post
         self.children = children
     }
 }
 
-extension Graph: Equatable {}
+extension Node: Equatable {}
 
-extension Graph: Codable {
+extension Node: Codable {
     enum CodingKeys: String, CodingKey {
         case post, children
     }
@@ -23,7 +23,7 @@ extension Graph: Codable {
 
         try container.encode(post, forKey: .post)
         
-        var childrenDict: [String: Graph]?
+        var childrenDict: [String: Node]?
         if let children = children {
             childrenDict = Index.convertIndexDictionary(children)
         }
@@ -34,9 +34,9 @@ extension Graph: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let post = try container.decode(Post.self, forKey: .post)
-        var children: [Index: Graph]?
+        var children: [Index: Node]?
         do {
-            if let childrenDict = try container.decode([String: Graph]?.self, forKey: .children) {
+            if let childrenDict = try container.decode([String: Node]?.self, forKey: .children) {
                 children = try Index.convertStringDictionary(childrenDict)
             }
             

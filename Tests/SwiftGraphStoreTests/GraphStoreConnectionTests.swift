@@ -285,18 +285,15 @@ final class GraphStoreConnectionTests: XCTestCase {
         testObject.setShip(ship)
         
         let childIndex = Index.testInstance
-        print(childIndex)
         let childPost = Post.testInstance
-        let childGraph = Graph(post: childPost, children: nil)
+        let childGraph = Node(post: childPost, children: nil)
         let children = [childIndex: childGraph]
         
         let resource = Resource.testInstance
         let post = Post.testInstance
         
-        print(post.index)
-        
-        let updateNodes = [post.index: Graph(post: post,
-                                             children: children)]
+        let updateNodes = [post.index: Node(post: post,
+                                            children: children)]
         let update = GraphUpdate.addNodes(resource: resource,
                                           nodes: updateNodes)
 
