@@ -2,9 +2,11 @@ import Foundation
 import Combine
 import Alamofire
 import UrsusHTTP
+import os
 
 // TODO: Log errors and not-logged-in errors
 public class GraphStoreConnection: GraphStoreConnecting {
+    private let logger = Logger()
     public internal(set) var ship: Ship?
     
     private let airlockConnection: AirlockConnecting
@@ -137,6 +139,8 @@ public class GraphStoreConnection: GraphStoreConnecting {
             return Fail(error: .notLoggedIn)
                 .eraseToAnyPublisher()
         }
+        
+        logger.debug("Performing scry at \(path.asPath)")
 
         return airlockConnection
             .requestScry(app: Constants.graphStoreAppName, path: path.asPath)
