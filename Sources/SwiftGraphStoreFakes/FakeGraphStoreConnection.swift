@@ -170,6 +170,27 @@ public class FakeGraphStoreConnection: GraphStoreConnecting {
         }
     }
     
+    public var requestReadChildren_calledCount = 0
+    public var requestReadChildren_paramResource: Resource?
+    public var requestReadChildren_paramIndex: Index?
+    public var requestReadChildren_paramMode: ScryMode?
+    public var requestReadChildren_error: ScryError?
+    public var requestReadChildren_returnUpdate: GraphStoreUpdate?
+    public func requestReadChildren(resource: Resource, index: Index, mode: ScryMode) -> AnyPublisher<GraphStoreUpdate, ScryError> {
+        requestReadChildren_calledCount += 1
+        requestReadChildren_paramResource = resource
+        requestReadChildren_paramIndex = index
+        requestReadChildren_paramMode = mode
+        
+        if let error = requestReadChildren_error {
+            return Fail(outputType: GraphStoreUpdate.self, failure: error)
+                .eraseToAnyPublisher()
+        } else {
+            return Just(requestReadChildren_returnUpdate!)
+                .withErrorType()
+        }
+    }
+    
     public var requestReadRootNodes_calledCount = 0
     public var requestReadRootNodes_paramResource: Resource?
     public var requestReadRootNodes_error: ScryError?
