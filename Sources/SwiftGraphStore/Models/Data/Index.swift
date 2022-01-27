@@ -1,5 +1,4 @@
 import Foundation
-import BigInt
 
 // TODO: allow this index to be based off a @da, instead of a swift `Date`
 public struct Index {

@@ -1,5 +1,4 @@
 import XCTest
-import BigInt
 @testable import SwiftGraphStore
 
 class IndexTests: XCTestCase {

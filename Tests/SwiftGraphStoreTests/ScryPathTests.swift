@@ -1,6 +1,5 @@
 import XCTest
 import UrsusHTTP
-import BigInt
 @testable import SwiftGraphStore
 
 final class ScryPathTests: XCTestCase {
