@@ -33,7 +33,7 @@ public enum GraphUpdate: Codable, Equatable {
         case let .addGraph(resource, graph, mark, overwrite):
             var addGraphContainer = container.nestedContainer(keyedBy: AddGraphCodingKeys.self, forKey: .addGraph)
             try addGraphContainer.encode(resource, forKey: .resource)
-            let graphDict = Graph.convertGraphDictionary(graph)
+            let graphDict = graph.asStringDictionary()
             try addGraphContainer.encode(graphDict, forKey: .graph)
             switch mark {
             case .some(let value):
@@ -65,7 +65,7 @@ public enum GraphUpdate: Codable, Equatable {
             let graph: Graph
             do {
                 let graphDict = try addGraphContainer.decode([String: Node].self, forKey: .graph)
-                graph = try Graph.convertStringDictionary(graphDict)
+                graph = try graphDict.asGraph()
             } catch {
                 throw DecodingError.dataCorruptedError(Index.self,
                                                        at: [AddGraphCodingKeys.graph],

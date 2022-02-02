@@ -25,7 +25,7 @@ extension Node: Codable {
         
         var childrenDict: [String: Node]?
         if let children = children {
-            childrenDict = Graph.convertGraphDictionary(children)
+            childrenDict = children.asStringDictionary()
         }
         try container.encode(childrenDict, forKey: .children)
     }
@@ -37,7 +37,7 @@ extension Node: Codable {
         var children: Graph?
         do {
             if let childrenDict = try container.decode([String: Node]?.self, forKey: .children) {
-                children = try Graph.convertStringDictionary(childrenDict)
+                children = try childrenDict.asGraph()
             }
             
         } catch {
