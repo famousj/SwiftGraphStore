@@ -82,7 +82,7 @@ extension Index {
 }
 
 extension Index {
-    var parent: Index? {
+    public var parent: Index? {
         let parentAtoms = atoms.dropLast()
         guard parentAtoms.count > 0 else {
             return nil
@@ -90,7 +90,7 @@ extension Index {
         return Index(atoms: Array(parentAtoms))
     }
     
-    var leaf: Atom? {
+    public var leaf: Atom? {
         atoms.last
     }
 }
