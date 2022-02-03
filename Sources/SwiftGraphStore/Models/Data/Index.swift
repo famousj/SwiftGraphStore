@@ -90,7 +90,7 @@ extension Index {
         return Index(atoms: Array(parentAtoms))
     }
     
-    var leaf: Atom {
+    var leaf: Atom? {
         atoms.last
     }
 }
