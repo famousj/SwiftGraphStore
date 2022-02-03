@@ -21,6 +21,12 @@ class IndexTests: XCTestCase {
         XCTAssertEqual(testObject.pathWithSeparators, "/\(indexString)")
     }
     
+    func test_init_whenStringIsEmpty_createsEmptyAtomArray() {
+        let testObject = Index("")!
+        
+        XCTAssertEqual(testObject.atoms.count, 0)
+    }
+    
     func test_init_acceptsPath() throws {
         let indexString = "/123/456/789"
         let testObject = try XCTUnwrap(Index(indexString))
@@ -182,5 +188,22 @@ class IndexTests: XCTestCase {
         XCTAssertEqual(lhs < rhs, false)
     }
     
-
+    func test_parent_dropsLeaf() {
+        let testObject = Index("/9/8/7")!
+        
+        let expectedParent = Index("/9/8")!
+        XCTAssertEqual(testObject.parent, expectedParent)
+    }
+    
+    func test_parent_whenIndexHasOneElement_returnsNil() {
+        let testObject = Index("987")!
+        
+        XCTAssertNil(testObject.parent)
+    }
+    
+    func test_parent_whenIndexHasZeroElement_returnsNil() {
+        let testObject = Index("")!
+        
+        XCTAssertNil(testObject.parent)
+    }
 }

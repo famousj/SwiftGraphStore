@@ -1,7 +1,7 @@
 import Foundation
 import UrsusHTTP
 
-// TODO: Make this into a real type that validates that it is %actually-a-term
+// TODO: Make this into a real type that validates that it is %actually-a-term and converts to an atom
 public typealias Term = String
 
 public struct Resource: Codable, Equatable, Identifiable {

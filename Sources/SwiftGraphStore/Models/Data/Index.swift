@@ -81,6 +81,20 @@ extension Index {
     }
 }
 
+extension Index {
+    var parent: Index? {
+        let parentAtoms = atoms.dropLast()
+        guard parentAtoms.count > 0 else {
+            return nil
+        }
+        return Index(atoms: Array(parentAtoms))
+    }
+    
+    var leaf: Atom {
+        atoms.last
+    }
+}
+
 extension Index: Codable {}
 
 extension Index: Equatable {}
