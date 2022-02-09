@@ -22,7 +22,7 @@ final class ScryPathTests: XCTestCase {
         let resource = Resource(ship: Ship("nyt"), name: "graph-with-nodes")
         let testObject = ScryPath.rootNodes(resource: resource)
         
-        let expectedPath = "/graph/~nyt/graph-with-nodes/subset/lone/~/~"
+        let expectedPath = "/graph/~nyt/graph-with-nodes/node/children/lone/~/~"
         XCTAssertEqual(testObject.asPath, expectedPath)
     }
     
