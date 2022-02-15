@@ -8,7 +8,7 @@ extension ScryMode: CaseIterable {
 }
 
 extension ScryMode {
-    static var random: ScryMode {
+    public static var random: ScryMode {
         allCases.randomElement()!
     }
 }

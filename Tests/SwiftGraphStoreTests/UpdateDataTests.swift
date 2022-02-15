@@ -59,7 +59,7 @@ final class UpdateDataTests: XCTestCase {
     }
 
     func test_addGraphEncodeAndDecode() throws {
-        let resource = Resource(ship: Ship.testInstance, name: UUID().uuidString)
+        let resource = Resource.testInstance
         let graph = Graph.testInstance
         let testObject = GraphUpdate.addGraph(resource: resource,
                                               graph: graph,
@@ -79,7 +79,7 @@ final class UpdateDataTests: XCTestCase {
     func test_addNodesEncodeAndDecode() throws {
         let children = Graph.testInstance
 
-        let resource = Resource(ship: Ship.testInstance, name: UUID().uuidString)
+        let resource = Resource.testInstance
         let index = Index.testInstance
         let post = Post.testInstance
         let graph = Node(post: post, children: children)
