@@ -25,7 +25,6 @@ public enum ScryError: LocalizedError {
         return url.absoluteString
     }
     
-    // TODO: Add more expected errors
     static func fromAFError(_ error: AFError) -> ScryError {
         if case .responseValidationFailed(let reason) = error,
            case .unacceptableStatusCode(let code) = reason,

@@ -4,7 +4,6 @@ import SwiftGraphStoreFakes
 
 @testable import SwiftGraphStore
 
-// TODO: Fill in all the nil values with real values and make sure things still work
 final class UpdateDataTests: XCTestCase {
     
     func test_addGraph_pokeResponseParses() throws {

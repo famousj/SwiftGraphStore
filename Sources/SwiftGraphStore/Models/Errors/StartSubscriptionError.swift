@@ -15,7 +15,6 @@ public enum StartSubscriptionError: LocalizedError {
         }
     }
     
-    // TODO: Add more expected errors
     static func fromAFError(_ error: AFError) -> StartSubscriptionError {
         .startSubscriptionFailed(message: error.localizedDescription)
     }
