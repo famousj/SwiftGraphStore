@@ -14,10 +14,10 @@ public class GraphStoreConnection: GraphStoreConnecting {
     public func createPost(index: Index, contents: [Content]) -> Post? {
         createPost(index: index, contents: contents, timeSent: Date())
     }
-
+    
     public func createPost(index: Index, contents: [Content], timeSent: Date) -> Post? {
         guard let ship = ship else {
-            print("Can't make a post!  Not logged in.")
+            logger.info("Unable to create a post.  Not logged in.")
             return nil
         }
         
@@ -40,8 +40,10 @@ public class GraphStoreConnection: GraphStoreConnecting {
                 self.ship = ship
                 return ship
             }
-            .mapError { error in
+            .mapError { [weak self] error in
                 let loginError = LoginError.fromAFError(error)
+                self?.logger.info("Error when logging in: \(error.localizedDescription)")
+                
                 return loginError
             }
             .eraseToAnyPublisher()
@@ -49,18 +51,24 @@ public class GraphStoreConnection: GraphStoreConnecting {
     
     public func requestConnect() -> AnyPublisher<Never, ConnectError> {
         guard let ship = ship else {
+            logger.info("Unable to connect.  Not logged in.")
             return Fail(error: .notLoggedIn)
                 .eraseToAnyPublisher()
         }
         
         return airlockConnection
             .requestPoke(ship: ship, app: "hood", mark: "helm-hi", json: "airlock connected")
-            .mapError { .fromPokeError($0) }
+            .mapError { [weak self] error in
+                let connectError = ConnectError.fromPokeError(error)
+                self?.logger.info("Error when connecting: \(error.localizedDescription)")
+                return connectError
+            }
             .eraseToAnyPublisher()
     }
     
     public func requestStartSubscription() -> AnyPublisher<Never, StartSubscriptionError> {
         guard let ship = ship else {
+            logger.info("Unable to start subscription.  Not logged in.")
             return Fail(error: .notLoggedIn)
                 .eraseToAnyPublisher()
         }
@@ -69,7 +77,11 @@ public class GraphStoreConnection: GraphStoreConnecting {
             .requestStartSubscription(ship: ship,
                                       app: Constants.graphStoreAppName,
                                       path: Constants.graphStoreUpdatePath)
-            .mapError { .fromAFError($0) }
+            .mapError { [weak self] error in
+                let subscriptionError = StartSubscriptionError.fromAFError(error)
+                self?.logger.info("Error when starting subscription: \(error.localizedDescription)")
+                return subscriptionError
+            }
             .eraseToAnyPublisher()
     }
     
@@ -115,16 +127,26 @@ public class GraphStoreConnection: GraphStoreConnecting {
         
         return airlockConnection
             .requestTestScry(app: Constants.graphStoreAppName, path: path)
-            .mapError { ScryError.fromAFError($0) }
+            .mapError { [weak self] error in
+                let scryError = ScryError.fromAFError(error)
+                self?.logger.info("Error when scrying: \(error.localizedDescription)")
+                return scryError
+            }
             .eraseToAnyPublisher()
     }
     
     private func doPoke<T: Encodable>(update: T, actionMessage: String) -> AnyPublisher<Never, PokeError> {
         guard let ship = ship else {
+            logger.info("Unable to \(actionMessage)t.  Not logged in.")
+            
             return Fail(error: PokeError.pokeFailure("Can't \(actionMessage). You aren't logged in!"))
+                .mapError { [weak self] error in
+                    self?.logger.info("Error when performing poke: \(error.localizedDescription)")
+                    return error
+                }
                 .eraseToAnyPublisher()
         }
-
+        
         return airlockConnection
             .requestPoke(ship: ship,
                          app: Constants.graphStoreAppName,
@@ -135,15 +157,21 @@ public class GraphStoreConnection: GraphStoreConnecting {
     
     private func doScry(path: ScryPath) -> AnyPublisher<GraphStoreUpdate, ScryError> {
         guard let _ = ship else {
+            logger.info("Unable to scry at \(path.asPath).  Not logged in.")
+            
             return Fail(error: .notLoggedIn)
                 .eraseToAnyPublisher()
         }
         
         logger.debug("Performing scry at \(path.asPath)")
-
+        
         return airlockConnection
             .requestScry(app: Constants.graphStoreAppName, path: path.asPath)
-            .mapError { ScryError.fromAFError($0) }
+            .mapError { [weak self] error in
+                let scryError = ScryError.fromAFError(error)
+                self?.logger.info("Error when scrying: \(error.localizedDescription)")
+                return scryError
+            }
             .eraseToAnyPublisher()
     }
 }
