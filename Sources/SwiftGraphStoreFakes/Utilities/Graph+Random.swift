@@ -1,5 +1,5 @@
 import Foundation
-@testable import SwiftGraphStore
+import SwiftGraphStore
 
 extension Graph {
     public static var testInstance: Graph {

@@ -1,5 +1,5 @@
 import Foundation
-@testable import SwiftGraphStore
+import SwiftGraphStore
 
 extension Atom {
     public static var testInstance: Atom {

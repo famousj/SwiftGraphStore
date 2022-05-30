@@ -1,5 +1,5 @@
 import Foundation
-@testable import SwiftGraphStore
+import SwiftGraphStore
 
 extension Index {
     public static var testInstance: Index {
